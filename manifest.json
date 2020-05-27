@@ -1,0 +1,32 @@
+{
+  "name": "Cookie Manager",
+  "version": "1.0",
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*","*://*.youtube.com/*"],
+      "js":["background_youtube.js"],
+      "run_at": "document_end",
+      "all_frames": true
+    }
+  ],
+  "description": "Build an Extension!",
+  "permissions": ["activeTab", "declarativeContent", "storage", "tabs",
+    "http://*/*",
+    "https://*/*"],
+  "background": {
+    "scripts": ["background_youtube.js"],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+
+  "icons": {
+    "16": "icon.png",
+    "32": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
+  "manifest_version": 2
+}

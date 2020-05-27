@@ -1,0 +1,14 @@
+/* Switch info */
+.custom-switch .custom-control-input:checked~.custom-control-label::before {
+    background-color: #ca8824;
+}
+#mainform{
+    width: 430px;
+}
+/*#icon{*/
+    /*width:30px;*/
+    /*height: 30px;*/
+/*}*/
+.col-sm-4{
+    width: 60px;
+}
