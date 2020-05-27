@@ -4,76 +4,88 @@
     <title>Bootstrap 4 Example</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
 </head>
 <body>
 
-<form id="mainform">
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item">
-            <div class="row">
-                <div class="col-sm-2">
-                    <!--<img id="icon" src="icon.png" style="width: 100%;">-->
-                </div>
-                <div class="col-sm-10">
-                    <div class="page-header text-center" style="font-family: Impact, Charcoal, sans-serif;">Cookie Manager</div>
-                </div>
-            </div>
-        </li>
-        <li class="list-group-item">
-            <div class="row">
-                <div class="col-sm-9">Allow cookies on <strong>google.com</strong></div>
-                <div class="col-sm-3">
-                    <div class="custom-control custom-switch float-right">
-                        <input type="checkbox" class="custom-control-input" id="switch1">
-                        <label class="custom-control-label" for="switch1"></label>
+    <div class="container">
+        <form>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-xm-2">
+                            <img id="icon" src="images/icon48.png">
+                        </div>
+                        <div class="col-xm-10">
+                            <div class="page-header" style="font-family: Impact, Charcoal, sans-serif;">Cookie Manager</div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </li>
-        <li class="list-group-item">
-            <div class="row">
-                <div class="col-sm-9">Start Incognito mode</div>
-                <div class="col-sm-3">
-                    <div class="custom-control custom-switch float-right">
-                        <input type="checkbox" class="custom-control-input" id="switch2">
-                        <label class="custom-control-label" for="switch2"></label>
+                </li>
+                <li class="list-group-item">
+                    <div class="row justify-content-between">
+                        <div class="col-xm-9">Allow cookies on <strong>google.com</strong></div>
+                        <div class="col-xm-3">
+                            <div class="custom-control custom-switch float-right">
+                                <input type="checkbox" class="custom-control-input" id="switch1">
+                                <label class="custom-control-label" for="switch1"></label>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </li>
-        <li class="list-group-item">
-            <div class="row">
-                <div class="col-sm-9">Ads free mode</div>
-                <div class="col-sm-3">
-                    <div class="custom-control custom-switch float-right">
-                        <input type="checkbox" class="custom-control-input" id="switch3">
-                        <label class="custom-control-label" for="switch3"></label>
+                </li>
+                <li class="list-group-item">
+                    <div class="row justify-content-between">
+                        <div class="col-xm-9">Start Incognito mode</div>
+                        <div class="col-xm-3">
+                            <div class="custom-control custom-switch pull-right">
+                                <input type="checkbox" class="custom-control-input" id="switch2">
+                                <label class="custom-control-label" for="switch2"></label>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </li>
-        <li class="list-group-item">
-            <div class="row">
-                <div class="col-sm-8">
-                    I choose
-                </div>
-                <div class="col-sm-4">
-                    <select name="cars" class="custom-select float-right">
-                        <option value="default"><strong>Default</strong>></option>
-                        <option value="val1">val1</option>
-                        <option value="val2">val2</option>
-                        <option value="val3">val3</option>
-                    </select>
-                </div>
-            </div>  
-        </li>
-    </ul>
-</form>
+                </li>
+                <li class="list-group-item">
+                    <div class="row justify-content-between">
+                        <div class="col-xm-9">Ads free mode</div>
+                        <div class="col-xm-3">
+                            <div class="custom-control custom-switch float-right">
+                                <input type="checkbox" class="custom-control-input" id="switch3">
+                                <label class="custom-control-label" for="switch3"></label>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="row justify-content-between">
+                        <div class="col-xm-9">Broken switch</div>
+                        <div class="col-xm-3">
+                            <div class="custom-control custom-switch float-right">
+                                <input type="checkbox" class="custom-control-input" id="switch4">
+                                <label class="custom-control-label" for="switch4"></label>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="row justify-content-between">
+                        <div class="col-xm-8">I choose</div>
+                        <div class="col-xm-4">
+                            <select class="custom-select float-right">
+                                <option value="default"><strong>Default</strong></option>
+                                <option value="val1">val1</option>
+                                <option value="val2">val2</option>
+                                <option value="val3">val3</option>
+                            </select>
+                        </div>
+                    </div>  
+                </li>
+            </ul>
+        </form>
+    </div>
+
 Cookie manager has been protecting your privacy since 
 
 </body>
