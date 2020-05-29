@@ -10,11 +10,11 @@
     }
   ],
   "description": "Build an Extension!",
-  "permissions": ["activeTab", "declarativeContent", "storage", "tabs",
+  "permissions": ["cookies", "activeTab", "declarativeContent", "storage", "tabs",
     "http://*/*",
     "https://*/*"],
   "background": {
-    "scripts": ["background_youtube.js"],
+    "scripts": ["background.js"],
     "persistent": false
   },
   "browser_action": {
