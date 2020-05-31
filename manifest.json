@@ -7,12 +7,17 @@
       "js":["background_youtube.js"],
       "run_at": "document_end",
       "all_frames": true
+    },
+    {
+      "matches": ["https://www.google.com/"],
+      "js": ["content.js"],
+      "run_at": "document_start"
     }
   ],
   "description": "Build an Extension!",
-  "permissions": ["cookies", "activeTab", "declarativeContent", "storage", "tabs",
-    "http://*/*",
-    "https://*/*"],
+  "permissions": ["browsingData", "cookies", "activeTab", 
+    "declarativeContent", "storage", "tabs",
+    "http://*/*", "https://*/*"],
   "background": {
     "scripts": ["background.js"],
     "persistent": false
