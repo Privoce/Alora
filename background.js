@@ -76,6 +76,23 @@ function messageHandler(message) {
 
 
 
+chrome.runtime.onInstalled.addListener(function(details) {
+    // default configuration
+    const startTime = (new Date()).toJSON();
+    const endTime = startTime;
+    const incognitoStatus = false;
+    const defaultConfig = {config: {startTime: startTime, endTime: endTime, isIncognito: incognitoStatus}};
+    // set initial configuration
+    chrome.storage.sync.get(defaultConfig, function(result) {
+        chrome.storage.sync.set(result.config);
+    });
+    // chrome.storage.sync.set({config: {startTime: startTime, endTime: endTime, isIncognito: incognitoStatus}}, function() {
+    //     console.log("background: initial configuration saved.");
+    // });
+});
+
+
+
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         console.log("background: message received!");
