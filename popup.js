@@ -15,6 +15,7 @@ function saveAndNotify(status) {
 
 function restore_options() {
     chrome.storage.sync.get(function(res) {
+        var blacklistBtn = document.getElementById("blacklistBtn");
 
         // restore incognito switch
         document.getElementById("switch2").checked = res.config.isIncognito;
@@ -23,17 +24,25 @@ function restore_options() {
         chrome.tabs.query({'active': true, 'windowId': chrome.windows.WINDOW_ID_CURRENT}, function(tabs){
                 const url = tabs[0].url;
                 const domain = new URL(url).hostname;
+                document.querySelector("#siteurl").innerHTML = domain;
                 // add/remove from blacklist
                 var blacklist = new Set(res.blacklist);
-                const btnStatus = blacklist.has(domain);
-                var blacklistBtn = document.getElementById("blacklistBtn");
-                blacklistBtn.value = btnStatus;
-                const btnStyle = btnStatus ? "btn-outline-success" : "btn-outline-danger";
-                blacklistBtn.classList.add(btnStyle);
-                blacklistBtn.innerText = btnStatus ? "Unblock" : "Block";
-                blacklistBtn.addEventListener("click", function() {
-                    blacklistBtnHandler(blacklistBtn, domain, blacklist);
-                });
+                var btnStatus = blacklist.has(domain);
+                //
+           // document.querySelector("#switch2").addEventListener("change", toggleIncognito);
+            // alert(btnStatus);
+            // btnStatus = false;
+            blacklistBtn.checked = btnStatus;
+                // alert(btnStatus);
+                // const btnStyle = btnStatus ? "btn-outline-danger" : "btn-outline-success";
+                //make switch match status
+                // blacklistBtn.classList.add(btnStyle);
+                // blacklistBtn.innerText = btnStatus ? "YES" : "NO";
+                // document.querySelector("#blacklistBtn").addEventListener("hover", blacklistBtnHandler(blacklistBtn, domain, blacklist));
+            blacklistBtn.addEventListener("click", function() {
+
+                blacklistBtnHandler(blacklistBtn, domain, blacklist,btnStatus)
+            });
             }
         );
     });
@@ -54,15 +63,16 @@ function toggleIncognito() {
 }
 
 
-function blacklistBtnHandler(btn, domain, blacklist) {
-    const oldBtnStatus = btn.value == "true";
-    const oldStyle = oldBtnStatus ? "btn-outline-success" : "btn-outline-danger";
+function blacklistBtnHandler(btn, domain, blacklist,btnStatus) {
+    const oldBtnStatus = btnStatus;
+    // const oldStyle = oldBtnStatus ? "btn-outline-danger" : "btn-outline-success";
     const newBtnStatus = !oldBtnStatus;
-    btn.value = newBtnStatus;
-    const newStyle = newBtnStatus ? "btn-outline-success" : "btn-outline-danger";
-    blacklistBtn.classList.remove(oldStyle);
-    blacklistBtn.classList.add(newStyle);
-    blacklistBtn.innerText = newBtnStatus ? "Unblock" : "Block";
+    btn.checked = newBtnStatus;
+
+    // const newStyle = newBtnStatus ? "btn-outline-danger" : "btn-outline-success";
+    // blacklistBtn.classList.remove(oldStyle);
+    // blacklistBtn.classList.add(newStyle);
+    // blacklistBtn.innerText = newBtnStatus ? "YES" : "NO";
     // add/remove from blacklist
     if (newBtnStatus) {
         blacklist.add(domain);
@@ -74,6 +84,7 @@ function blacklistBtnHandler(btn, domain, blacklist) {
     chrome.storage.sync.set({blacklist: Array.from(blacklist)}, function() {
         console.log("popup: blacklist updated");
     });
+    restore_options();
 }
 
 
@@ -86,7 +97,7 @@ console.log("popup: extension starts");
 // This js controls popup page
 document.addEventListener("DOMContentLoaded", function() {
     // load button states
-    restore_options();
+    restore_options(blacklistBtn);
     console.log("popup: load configuration");
     document.querySelector("#switch2").addEventListener("change", toggleIncognito);
 });
