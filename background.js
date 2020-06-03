@@ -1,7 +1,3 @@
-// chrome.cookies.onChanged.addListener(function(info) {
-//     console.log("onChanged" + JSON.stringify(info));
-// });
-
 class Timer {
     #start;
     #end;
@@ -49,14 +45,6 @@ class CookieManager {
     cleanSince(elapse = 0) {
         chrome.browsingData.removeCookies({"since": elapse});
     }
-
-    // loadConfig() {
-    //     // load cookie manager configuration
-    //     chrome.storage.sync.get({time: new Date(), isIncognito: false}, function(config) {
-    //         this.setTimer = config.time;
-    //         this.setIncognitoStatus = config.isIncognito;
-    //     });
-    // }
 }
 
 function messageHandler(message) {
@@ -74,21 +62,43 @@ function messageHandler(message) {
 
 }
 
+function getCookieUrl(cookie) {
+    return "http" + (cookie.secure ? "s" : "") + "://" + cookie.domain + cookie.path;
+}
 
+function clearBlacklistCookies(data) {
+    const urls = data.map(url => url.split(/[#?]/)[0]);
+    const uniqueUrls = [...new Set(urls).values()].filter(Boolean);
+    Promise.all(
+        uniqueUrls.map(url =>
+        new Promise(resolve => {
+            chrome.cookies.getAll({url}, resolve);
+        }))).then(results => {
+        // convert the array of arrays into a deduplicated flat array of cookies
+        const cookies = [
+        ...new Map(
+            [].concat(...results)
+            .map(c => [JSON.stringify(c), c])
+        ).values()
+        ];
+
+        // do something with the cookies here
+        cookies.forEach(cookie => chrome.cookies.remove({url: getCookieUrl(cookie), name: cookie.name}, function(deletedCookie) {
+            console.log("background: Cookie " + getCookieUrl(deletedCookie) + " has been deleted by blacklist.");
+        }));
+    });
+}
 
 chrome.runtime.onInstalled.addListener(function(details) {
     // default configuration
     const startTime = (new Date()).toJSON();
     const endTime = startTime;
     const incognitoStatus = false;
-    const defaultConfig = {config: {startTime: startTime, endTime: endTime, isIncognito: incognitoStatus}};
+    const defaultConfig = {config: {startTime: startTime, endTime: endTime, isIncognito: incognitoStatus}, blacklist: []};
     // set initial configuration
     chrome.storage.sync.get(defaultConfig, function(result) {
         chrome.storage.sync.set(result.config);
     });
-    // chrome.storage.sync.set({config: {startTime: startTime, endTime: endTime, isIncognito: incognitoStatus}}, function() {
-    //     console.log("background: initial configuration saved.");
-    // });
 });
 
 
@@ -96,13 +106,19 @@ chrome.runtime.onInstalled.addListener(function(details) {
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         console.log("background: message received!");
-        // read and load configuration
+        if (request.domain) {
+            const domainAddr = request.domain;
+            chrome.storage.sync.get({blacklist: []}, function(res) {
+                var blacklist = new Set(res.blacklist);
+                if (blacklist.has(domainAddr)) {
+                    clearBlacklistCookies(request.data)
+                }
+            });
+        }
+        // load configuration and blacklist
         chrome.storage.sync.get(["config"], function(res) {
-            console.log(new Date(res.config.startTime));
-            console.log(new Date(res.config.endTime));
             var cookieManager = new CookieManager(res.config);
             messageHandler.bind(cookieManager)(request);
         });
-        // load latest cookieManager
     }
 );

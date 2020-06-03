@@ -9,9 +9,8 @@
       "all_frames": true
     },
     {
-      "matches": ["https://www.google.com/"],
-      "js": ["content.js"],
-      "run_at": "document_start"
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
     }
   ],
   "description": "Build an Extension!",
