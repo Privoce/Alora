@@ -13,6 +13,15 @@ function saveAndNotify(status) {
     });
 }
 
+function iconChange() {
+    if(document.getElementById("blacklistBtn").checked || document.getElementById("switch2").checked ) {
+        // send message to background script
+        chrome.runtime.sendMessage({ "newIconPath" : "images/f248.png" });
+    }else{
+        chrome.runtime.sendMessage({ "newIconPath" : "images/f148.png" });
+    }
+}
+
 function restore_options() {
     chrome.storage.sync.get(function(res) {
         var blacklistBtn = document.getElementById("blacklistBtn");
@@ -40,12 +49,13 @@ function restore_options() {
                 // blacklistBtn.innerText = btnStatus ? "YES" : "NO";
                 // document.querySelector("#blacklistBtn").addEventListener("hover", blacklistBtnHandler(blacklistBtn, domain, blacklist));
             blacklistBtn.addEventListener("click", function() {
-
                 blacklistBtnHandler(blacklistBtn, domain, blacklist,btnStatus)
             });
+
             }
         );
     });
+    iconChange();
 }
 
 function getMessage(type) {
