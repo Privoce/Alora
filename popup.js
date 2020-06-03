@@ -14,7 +14,8 @@ function saveAndNotify(status) {
 }
 
 function restore_options() {
-    chrome.storage.sync.get(["config", "blacklist"], function(res) {
+    chrome.storage.sync.get(function(res) {
+
         // restore incognito switch
         document.getElementById("switch2").checked = res.config.isIncognito;
         var blacklist = new Set(res.blacklist);

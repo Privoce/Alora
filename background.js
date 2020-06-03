@@ -97,7 +97,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
     const defaultConfig = {config: {startTime: startTime, endTime: endTime, isIncognito: incognitoStatus}, blacklist: []};
     // set initial configuration
     chrome.storage.sync.get(defaultConfig, function(result) {
-        chrome.storage.sync.set(result.config);
+        chrome.storage.sync.set(result);
     });
 });
 
