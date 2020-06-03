@@ -23,6 +23,7 @@ function iconChange() {
 }
 
 function restore_options() {
+    iconChange();
     chrome.storage.sync.get(function(res) {
         var blacklistBtn = document.getElementById("blacklistBtn");
 
@@ -55,7 +56,6 @@ function restore_options() {
             }
         );
     });
-    iconChange();
 }
 
 function getMessage(type) {
@@ -97,17 +97,12 @@ function blacklistBtnHandler(btn, domain, blacklist,btnStatus) {
     restore_options();
 }
 
-
-
-
 console.log("popup: extension starts");
-
-
 
 // This js controls popup page
 document.addEventListener("DOMContentLoaded", function() {
     // load button states
-    restore_options(blacklistBtn);
+    restore_options();
     console.log("popup: load configuration");
     document.querySelector("#switch2").addEventListener("change", toggleIncognito);
 });
