@@ -1,16 +1,9 @@
-function saveAndNotify(status) {
-    chrome.storage.sync.get(["config"], function(res) {
-        // update configuration
-        var config = res.config;
-        config.startTime = status ? (new Date()).toJSON() : config.startTime;
-        config.endTime = status ? config.startTime : (new Date()).toJSON();
-        config.isIncognito = status;
-        // notify
-        chrome.storage.sync.set({config: config}, function() {
-            console.log("User options saved.");
-            chrome.runtime.sendMessage(getMessage("incognito"), function(response) {});
-        });
-    });
+class PopupCache {
+    constructor(domain, blacklist, config) {
+        this.domain = domain;
+        this.blacklist = blacklist;
+        this.config = config;
+    }
 }
 
 function iconChange() {
@@ -22,88 +15,84 @@ function iconChange() {
     }
 }
 
-function restore_options() {
-    iconChange();
-    chrome.storage.sync.get(function(res) {
-        var blacklistBtn = document.getElementById("blacklistBtn");
-
-        // restore incognito switch
-        document.getElementById("switch2").checked = res.config.isIncognito;
-        var blacklist = new Set(res.blacklist);
-        // restore blacklist button
-        chrome.tabs.query({'active': true, 'windowId': chrome.windows.WINDOW_ID_CURRENT}, function(tabs){
-                const url = tabs[0].url;
-                const domain = new URL(url).hostname;
-                document.querySelector("#siteurl").innerHTML = domain;
-                // add/remove from blacklist
-                var blacklist = new Set(res.blacklist);
-                var btnStatus = blacklist.has(domain);
-                //
-           // document.querySelector("#switch2").addEventListener("change", toggleIncognito);
-            // alert(btnStatus);
-            // btnStatus = false;
-            blacklistBtn.checked = btnStatus;
-                // alert(btnStatus);
-                // const btnStyle = btnStatus ? "btn-outline-danger" : "btn-outline-success";
-                //make switch match status
-                // blacklistBtn.classList.add(btnStyle);
-                // blacklistBtn.innerText = btnStatus ? "YES" : "NO";
-                // document.querySelector("#blacklistBtn").addEventListener("hover", blacklistBtnHandler(blacklistBtn, domain, blacklist));
-            blacklistBtn.addEventListener("click", function() {
-                blacklistBtnHandler(blacklistBtn, domain, blacklist,btnStatus)
-            });
-
-            }
-        );
-    });
-}
-
-function getMessage(type) {
-    if (type == "incognito") {
-        return {cmd: "incognito", content: null};
-    }
+function reloadPopup() {
+    console.log(popupCache);
+    var domain = popupCache.domain;
+    document.querySelector("#siteurl").innerHTML = domain;
+    var btnStatus = popupCache.blacklist.has(domain);
+    document.getElementById("blacklistBtn").checked = btnStatus;
+    document.getElementById("switch2").checked = popupCache.config.isIncognito;
 }
 
 function toggleIncognito() {
-    console.log("popup: toggle");
+    var saveBtn = document.getElementById("saveBtn");
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = "Save Changes";
+    console.log("toggle incognito");
     // get latest configuration
     var incognitoStatus = document.getElementById("switch2").checked;
-    // save and notify background of configuration change
-    saveAndNotify(incognitoStatus);
+    // update local cache object
+    var currTime = (new Date()).toJSON();
+    popupCache.config.isIncognito = incognitoStatus;
+    if (incognitoStatus) {
+        popupCache.config.startTime = currTime;
+    }
+    popupCache.config.endTime = currTime;
+    port.postMessage(generateRequest("incognito"));
 }
 
-
-function blacklistBtnHandler(btn, domain, blacklist,btnStatus) {
-    const oldBtnStatus = btnStatus;
-    // const oldStyle = oldBtnStatus ? "btn-outline-danger" : "btn-outline-success";
-    const newBtnStatus = !oldBtnStatus;
-    btn.checked = newBtnStatus;
-
-    // const newStyle = newBtnStatus ? "btn-outline-danger" : "btn-outline-success";
-    // blacklistBtn.classList.remove(oldStyle);
-    // blacklistBtn.classList.add(newStyle);
-    // blacklistBtn.innerText = newBtnStatus ? "YES" : "NO";
-    // add/remove from blacklist
-    if (newBtnStatus) {
-        blacklist.add(domain);
-        console.log(domain + " added to blacklist.");
+function toggleBlacklist() {
+    var saveBtn = document.getElementById("saveBtn");
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = "Save Changes";
+    console.log("toggle blacklist");
+    var inBlacklist = document.getElementById("blacklistBtn").checked;
+    var domain = popupCache.domain;
+    if (inBlacklist) {
+        popupCache.blacklist.add(domain);
     } else {
-        blacklist.delete(domain);
-        console.log(domain + " removed from blacklist");
+        popupCache.blacklist.delete(domain);
     }
-    chrome.storage.sync.set({blacklist: Array.from(blacklist)}, function() {
-        console.log("popup: blacklist updated");
-    });
-    restore_options();
+}
+
+function generateRequest(reqType, args) {
+    switch(reqType) {
+        case "query":
+            return {reqType: reqType, keys: args};
+        case "update":
+            return {reqType: reqType, config: popupCache.config, blacklist: Array.from(popupCache.blacklist)};
+        case "incognito":
+            return {reqType: reqType, config: popupCache.config};
+    }
+}
+
+function saveChange() {
+    port.postMessage(generateRequest("update"));
+    window.close();
 }
 
 console.log("popup: extension starts");
+// blacklist cache
+var popupCache;
+var port = chrome.runtime.connect({name: "popup"});
+port.postMessage(generateRequest("query", ["config", "blacklist"]));
 
-// This js controls popup page
-document.addEventListener("DOMContentLoaded", function() {
-    // load button states
-    restore_options();
-    console.log("popup: load configuration");
-    document.querySelector("#switch2").addEventListener("change", toggleIncognito);
+port.onMessage.addListener(function(msg) {
+    if (msg.resType == "query") {
+        console.log(msg);
+        var blacklist = new Set(msg.values.blacklist);
+        var domainName = msg.domainName;
+        popupCache = new PopupCache(domainName, blacklist, msg.values.config);
+        reloadPopup();
+    }
 });
 
+// Add event listeners
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("blacklistBtn").addEventListener("change", toggleBlacklist);
+    document.querySelector("#switch2").addEventListener("change", toggleIncognito);
+    var saveBtn = document.getElementById("saveBtn");
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = "Saved";
+    saveBtn.addEventListener("click", saveChange);
+});

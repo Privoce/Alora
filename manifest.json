@@ -14,8 +14,7 @@
     }
   ],
   "description": "Build an Extension!",
-  "permissions": ["browsingData", "cookies", "activeTab", 
-    "declarativeContent", "storage", "tabs",
+  "permissions": ["browsingData", "cookies", "storage", "tabs", "history",
     "http://*/*", "https://*/*"],
   "background": {
     "scripts": ["background.js"],
