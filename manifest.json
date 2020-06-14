@@ -22,7 +22,6 @@
   },
   "browser_action": {
     "default_icon": {
-
       "48": "images/f148.png"
     },
     "default_popup": "popup.html"
