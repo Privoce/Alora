@@ -135,6 +135,8 @@ function generateResponse(resType, data, domainName) {
             return {resType: resType, values: data, domainName: domainName};
         case "update":
             return {resType: resType, values: data};
+        case "incognito":
+            return {resType: resType, values: data};
     }
 }
 
