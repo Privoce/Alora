@@ -78,7 +78,7 @@ function messageHandler(port, msg) {
                 })
             }).then(queryRes => {
                 chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
-                    var currentURL = tabs[0].url;
+                    var currentURL = tabs[0].url; 
                     var currentDomain = new URL(currentURL).hostname;
                     port.postMessage(generateResponse(msg.reqType, queryRes, currentDomain));
                 });
