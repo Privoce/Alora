@@ -6,17 +6,24 @@ class PopupCache {
     }
 }
 
-function iconChange() {
-    if (siteBlocked || document.getElementById("incognito-switch").checked) {
-        // send message to background script
-        chrome.runtime.sendMessage({"newIconPath": "images/f248.png"});
-    } else {
-        chrome.runtime.sendMessage({"newIconPath": "images/f148.png"});
+// function iconChange() {
+//     if (siteBlocked || document.getElementById("incognito-switch").checked) {
+//         // send message to background script
+//         chrome.runtime.sendMessage({"newIconPath": "images/f248.png"});
+//     } else {
+//         chrome.runtime.sendMessage({"newIconPath": "images/f148.png"});
+//     }
+// }
+
+function reloadIcon() {
+    if(siteBlocked || document.getElementById("incognito-switch").checked ) {
+        chrome.browserAction.setIcon({ "path" : "images/f248.png" });
+    }else{
+        chrome.browserAction.setIcon({ "path" : "images/f148.png" });
     }
 }
 
 function reloadPopup() {
-    console.log(popupCache);
     let domain = popupCache.domain;
     document.querySelector("#block-site-url").innerHTML = domain;
     siteBlocked = popupCache.blacklist.has(domain);
@@ -36,7 +43,6 @@ function toggleIncognito() {
     }
     popupCache.config.endTime = currTime;
     port.postMessage(generateRequest("incognito"));
-
     // auto save
     saveChange();
 }
@@ -72,7 +78,7 @@ function saveChange() {
     port.postMessage(generateRequest("update"));
 
     // change icon
-    iconChange();
+    reloadIcon();
 }
 
 async function setBlockSiteState(state, doAnimation) {

@@ -77,7 +77,7 @@ function messageHandler(port, msg) {
                     resolve(queryRes);
                 })
             }).then(queryRes => {
-                chrome.tabs.query({active: true}, function(tabs) {
+                chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
                     var currentURL = tabs[0].url;
                     var currentDomain = new URL(currentURL).hostname;
                     port.postMessage(generateResponse(msg.reqType, queryRes, currentDomain));
@@ -87,6 +87,7 @@ function messageHandler(port, msg) {
         case "update":
             chrome.storage.sync.set({config: msg.config, blacklist: msg.blacklist}, function() {
                 console.log("Config and blacklist updated.");
+                port.postMessage(generateResponse(msg.reqType, "success"));
             });
             break;
         case "incognito":
@@ -96,6 +97,7 @@ function messageHandler(port, msg) {
                     cookieManager.cleanSince(cookieManager.getTimer.getStartTime.getTime());
                     console.log("cookie cleaned!");
                 }
+                port.postMessage(generateResponse(msg.reqType, "success"));
             });
             break;    
     }
@@ -131,9 +133,18 @@ function generateResponse(resType, data, domainName) {
     switch (resType) {
         case "query":
             return {resType: resType, values: data, domainName: domainName};
+        case "update":
+            return {resType: resType, values: data};
     }
 }
 
+function reloadIcon(status) {
+    if (status.isBlacklisted || status.isIncognito) {
+        chrome.browserAction.setIcon({ "path" : "images/f248.png" });
+    } else {
+        chrome.browserAction.setIcon({ "path" : "images/f148.png" });
+    }
+}
 
 chrome.runtime.onInstalled.addListener(function(details) {
     // for dev purpose clear local storage
@@ -170,18 +181,49 @@ chrome.runtime.onConnect.addListener(function(port) {
     });
 });
 
-// clean cookies from blacklist websites
+// handle message from content scripts
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     new Promise(resolve => {
-        chrome.storage.sync.get("blacklist", function(res) {
+        chrome.storage.sync.get(["blacklist", "config"], function(res) {
             var blacklist = new Set(res.blacklist);
-            resolve(blacklist)
+            var incognitoStatus = res.config.isIncognito;
+            resolve({blacklist: blacklist, isIncognito: incognitoStatus});
         });
-    }).then(blacklist => {
-        if (blacklist.has(request.domain)) {
-            if (request.reqType == "tabClose") {
-                clearBlacklistCookies(request.data, request.url);
-            }
+    }).then(data => {
+        var isBlacklisted = data.blacklist.has(request.domain);
+        // reload icon when new tab open
+        switch(request.reqType) {
+            case "tabOpen":
+                reloadIcon({isBlacklisted: isBlacklisted, isIncognito: data.isIncognito});
+                break;
+            case "tabClose":
+                if (isBlacklisted) {
+                    clearBlacklistCookies(request.data, request.url);
+                }
+                break;
         }
+    });
+});
+
+// reload icon when switch between tabs
+chrome.tabs.onActivated.addListener(function(activeInfo) {
+    new Promise(resolve => {
+        chrome.storage.sync.get(["blacklist", "config"], function(res) {
+            var blacklist = new Set(res.blacklist);
+            var incognitoStatus = res.config.isIncognito;
+            resolve({blacklist: blacklist, isIncognito: incognitoStatus});
+        });
+    }).then(data => {
+        chrome.tabs.get(activeInfo.tabId, function(tab) {
+            var status;
+            if (tab.url) {
+                var currentURL = tab.url;
+                var currentDomain = new URL(currentURL).hostname;
+                status = {isBlacklisted: data.blacklist.has(currentDomain), isIncognito: data.isIncognito};
+            } else {
+                status = {isBlacklisted: false, isIncognito: data.isIncognito};
+            }
+            reloadIcon(status);
+        })
     });
 });
