@@ -6,15 +6,6 @@ class PopupCache {
     }
 }
 
-// function iconChange() {
-//     if (siteBlocked || document.getElementById("incognito-switch").checked) {
-//         // send message to background script
-//         chrome.runtime.sendMessage({"newIconPath": "images/f248.png"});
-//     } else {
-//         chrome.runtime.sendMessage({"newIconPath": "images/f148.png"});
-//     }
-// }
-
 function reloadIcon() {
     if(siteBlocked || document.getElementById("incognito-switch").checked ) {
         chrome.browserAction.setIcon({ "path" : "images/f248.png" });
@@ -32,7 +23,7 @@ function reloadPopup() {
 }
 
 function toggleIncognito() {
-    console.log("toggle incognito");
+    console.log(popupCache);
     // get latest configuration
     let incognitoStatus = document.getElementById("incognito-switch").checked;
     // update local cache object
@@ -42,13 +33,11 @@ function toggleIncognito() {
         popupCache.config.startTime = currTime;
     }
     popupCache.config.endTime = currTime;
-    port.postMessage(generateRequest("incognito"));
     // auto save
-    saveChange();
+    saveChange("incognito");
 }
 
 function toggleBlacklist() {
-    console.log("toggle blacklist");
     siteBlocked = !siteBlocked;
     let domain = popupCache.domain;
     if (siteBlocked) {
@@ -60,7 +49,7 @@ function toggleBlacklist() {
     }
 
     // auto save
-    saveChange();
+    saveChange("update");
 }
 
 function generateRequest(reqType, args) {
@@ -74,9 +63,8 @@ function generateRequest(reqType, args) {
     }
 }
 
-function saveChange() {
-    port.postMessage(generateRequest("update"));
-
+function saveChange(reqType) {
+    port.postMessage(generateRequest(reqType));
     // change icon
     reloadIcon();
 }
@@ -138,9 +126,9 @@ let siteBlocked = false;
 let port = chrome.runtime.connect({name: "popup"});
 port.postMessage(generateRequest("query", ["config", "blacklist"]));
 
+
 port.onMessage.addListener(function (msg) {
     if (msg.resType === "query") {
-        console.log(msg);
         let blacklist = new Set(msg.values.blacklist);
         let domainName = msg.domainName;
         popupCache = new PopupCache(domainName, blacklist, msg.values.config);
