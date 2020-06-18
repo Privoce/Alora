@@ -4,7 +4,7 @@
   "content_scripts": [
     {
       "matches": ["*://*.youtube.com/*"],
-      "js":["background_youtube.js"],
+      "js": ["background_youtube.js"],
       "run_at": "document_end",
       "all_frames": true
     },
@@ -13,9 +13,8 @@
       "js": ["content.js"]
     }
   ],
-  "description": "Build an Extension!",
-  "permissions": ["browsingData", "cookies", "storage", "tabs", "history",
-    "http://*/*", "https://*/*"],
+  "description": "Your smart digital footprints manager!",
+  "permissions": ["browsingData", "cookies", "storage", "tabs", "history"],
   "background": {
     "scripts": ["background.js"],
     "persistent": false

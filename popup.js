@@ -127,8 +127,7 @@ let port = chrome.runtime.connect({name: "popup"});
 port.postMessage(generateRequest("query", ["config", "blacklist"]));
 
 
-port.onMessage.addListener(function (msg) {
-    console.log("shit");
+port.onMessage.addListener(function handle (msg) {
     if (msg.resType === "query") {
         let blacklist = new Set(msg.values.blacklist);
         let domainName = msg.domainName;
