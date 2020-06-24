@@ -28,7 +28,7 @@ body {
 }
 
 #row-2 {
-    margin-top: 15px;                                 ;
+    margin-top: 15px;
 }
 
 #row-3 {
@@ -118,4 +118,9 @@ body {
     text-transform: capitalize;
     font-weight: bold;
     font-size: 13px;
+}
+
+#favicon-img {
+    margin-top: -3px;
+    width: 16px;
 }

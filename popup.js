@@ -7,10 +7,10 @@ class PopupCache {
 }
 
 function reloadIcon() {
-    if(siteBlocked || document.getElementById("incognito-switch").checked ) {
-        chrome.browserAction.setIcon({ "path" : "images/f248.png" });
-    }else{
-        chrome.browserAction.setIcon({ "path" : "images/f148.png" });
+    if (siteBlocked || document.getElementById("incognito-switch").checked) {
+        chrome.browserAction.setIcon({"path": "images/f248.png"});
+    } else {
+        chrome.browserAction.setIcon({"path": "images/f148.png"});
     }
 }
 
@@ -77,16 +77,34 @@ async function setBlockSiteState(state, doAnimation) {
         document.getElementById('block-site-hint').innerText = 'Store my browse histories from this site';
         if (doAnimation) {
             await Promise.all([
-                $('#large-cookie-1').animate({opacity: '0'}, {duration: animationDuration, easing: animationEasing}).promise(),
-                $('#large-cookie-2').animate({opacity: '1'}, {duration: animationDuration, easing: animationEasing}).promise()
+                $('#large-cookie-1').animate({opacity: '0'}, {
+                    duration: animationDuration,
+                    easing: animationEasing
+                }).promise(),
+                $('#large-cookie-2').animate({opacity: '1'}, {
+                    duration: animationDuration,
+                    easing: animationEasing
+                }).promise()
             ]);
             await Promise.all([
-                $('#large-cookie-2').animate({opacity: '0'}, {duration: animationDuration, easing: animationEasing}).promise(),
-                $('#large-cookie-3').animate({opacity: '1'}, {duration: animationDuration, easing: animationEasing}).promise()
+                $('#large-cookie-2').animate({opacity: '0'}, {
+                    duration: animationDuration,
+                    easing: animationEasing
+                }).promise(),
+                $('#large-cookie-3').animate({opacity: '1'}, {
+                    duration: animationDuration,
+                    easing: animationEasing
+                }).promise()
             ]);
             await Promise.all([
-                $('#large-cookie-3').animate({opacity: '0'}, {duration: animationDuration, easing: animationEasing}).promise(),
-                $('#large-cookie-4').animate({opacity: '1'}, {duration: animationDuration, easing: animationEasing}).promise()
+                $('#large-cookie-3').animate({opacity: '0'}, {
+                    duration: animationDuration,
+                    easing: animationEasing
+                }).promise(),
+                $('#large-cookie-4').animate({opacity: '1'}, {
+                    duration: animationDuration,
+                    easing: animationEasing
+                }).promise()
             ]);
         } else {
             $('#large-cookie-1').css({opacity: '0'});
@@ -99,16 +117,34 @@ async function setBlockSiteState(state, doAnimation) {
         document.getElementById('block-site-hint').innerText = 'Never store my browse histories from this site';
         if (doAnimation) {
             await Promise.all([
-                $('#large-cookie-4').animate({opacity: '0'}, {duration: animationDuration, easing: animationEasing}).promise(),
-                $('#large-cookie-3').animate({opacity: '1'}, {duration: animationDuration, easing: animationEasing}).promise()
+                $('#large-cookie-4').animate({opacity: '0'}, {
+                    duration: animationDuration,
+                    easing: animationEasing
+                }).promise(),
+                $('#large-cookie-3').animate({opacity: '1'}, {
+                    duration: animationDuration,
+                    easing: animationEasing
+                }).promise()
             ]);
             await Promise.all([
-                $('#large-cookie-3').animate({opacity: '0'}, {duration: animationDuration, easing: animationEasing}).promise(),
-                $('#large-cookie-2').animate({opacity: '1'}, {duration: animationDuration, easing: animationEasing}).promise()
+                $('#large-cookie-3').animate({opacity: '0'}, {
+                    duration: animationDuration,
+                    easing: animationEasing
+                }).promise(),
+                $('#large-cookie-2').animate({opacity: '1'}, {
+                    duration: animationDuration,
+                    easing: animationEasing
+                }).promise()
             ]);
             await Promise.all([
-                $('#large-cookie-2').animate({opacity: '0'}, {duration: animationDuration, easing: animationEasing}).promise(),
-                $('#large-cookie-1').animate({opacity: '1'}, {duration: animationDuration, easing: animationEasing}).promise()
+                $('#large-cookie-2').animate({opacity: '0'}, {
+                    duration: animationDuration,
+                    easing: animationEasing
+                }).promise(),
+                $('#large-cookie-1').animate({opacity: '1'}, {
+                    duration: animationDuration,
+                    easing: animationEasing
+                }).promise()
             ]);
         } else {
             $('#large-cookie-1').css({opacity: '1'});
@@ -126,8 +162,7 @@ let siteBlocked = false;
 let port = chrome.runtime.connect({name: "popup"});
 port.postMessage(generateRequest("query", ["config", "blacklist"]));
 
-
-port.onMessage.addListener(function handle (msg) {
+port.onMessage.addListener(function handle(msg) {
     if (msg.resType === "query") {
         let blacklist = new Set(msg.values.blacklist);
         let domainName = msg.domainName;
@@ -141,4 +176,10 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("btn-block-site").addEventListener("click", toggleBlacklist);
     document.querySelector("#incognito-switch").addEventListener("change", toggleIncognito);
     $('img').on('dragstart', () => false);  // make all images not draggable
+    chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+        var currTab = tabs[0];
+        if (currTab) {
+            document.getElementById('favicon-img').src = "chrome://favicon/" + currTab.url;
+        }
+    });
 });

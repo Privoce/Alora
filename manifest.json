@@ -14,7 +14,8 @@
     }
   ],
   "description": "Your smart digital footprints manager!",
-  "permissions": ["browsingData", "cookies", "storage", "tabs", "history"],
+  "permissions": ["browsingData", "cookies", "storage", "tabs", "history", "chrome://favicon/"],
+  "content_security_policy": "script-src 'self'; object-src 'self'; img-src chrome://favicon;",
   "background": {
     "scripts": ["background.js"],
     "persistent": false
