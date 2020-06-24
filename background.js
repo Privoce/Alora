@@ -149,28 +149,16 @@ function reloadIcon(status) {
 }
 
 chrome.runtime.onInstalled.addListener(function(details) {
-    // for dev purpose clear local storage
-    new Promise(resolve => {
-        chrome.storage.sync.clear(function() {
-            var error = chrome.runtime.lastError;
-            if (error) {
-                console.error(error);
-            }
-            console.log("storage cleaned")
-            resolve();
-        });
-    }).then(() => {
-        // default configuration
-        const startTime = (new Date()).toJSON();
-        const endTime = startTime;
-        const incognitoStatus = false;
-        const defaultConfig = {"config": {"startTime": startTime, "endTime": endTime, "isIncognito": incognitoStatus}, 
-                                "blacklist": []};
-        // set initial configuration
-        chrome.storage.sync.get(defaultConfig, function(result) {
-            chrome.storage.sync.set(result, () => console.log("default value set"));
-        });
-    });
+	// default configuration
+	const startTime = (new Date()).toJSON();
+	const endTime = startTime;
+	const incognitoStatus = false;
+	const defaultConfig = {"config": {"startTime": startTime, "endTime": endTime, "isIncognito": incognitoStatus}, 
+							"blacklist": []};
+	// set initial configuration
+	chrome.storage.sync.get(defaultConfig, function(result) {
+		chrome.storage.sync.set(result, () => console.log("default value set"));
+	});
 });
 
 chrome.runtime.onConnect.addListener(function(port) {
