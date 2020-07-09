@@ -1,37 +1,37 @@
 {
-  "name": "Cookie Manager",
-  "version": "1.0",
+  "manifest_version": 2,
+  "name": "Alora",
+  "version": "1.1",
   "content_scripts": [
     {
       "matches": ["*://*.youtube.com/*"],
-      "js": ["background_youtube.js"],
+      "js": ["js/youtube.js"],
       "run_at": "document_end",
       "all_frames": true
     },
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "js": ["js/content.js"]
     }
   ],
-  "description": "Your smart digital footprints manager!",
+  "description": "Manage cookies wisely and protect your privacy.",
   "permissions": ["browsingData", "cookies", "storage", "tabs", "history", "chrome://favicon/"],
   "content_security_policy": "script-src 'self'; object-src 'self'; img-src chrome://favicon;",
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["js/background.js"],
     "persistent": false
   },
   "browser_action": {
     "default_icon": {
-      "48": "images/f148.png"
+      "16": "images/ba-off.png"
     },
     "default_popup": "popup.html"
   },
   "icons": {
-    "16": "images/icon16.png",
-    "32": "images/icon32.png",
-    "48": "images/icon48.png",
-    "128": "images/icon128.png"
+    "16": "images/icon-16.png",
+    "32": "images/icon-32.png",
+    "48": "images/icon-48.png",
+    "128": "images/icon-128.png"
 
-  },
-  "manifest_version": 2
+  }
 }

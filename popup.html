@@ -2,81 +2,48 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">    <link rel="stylesheet" href="lib/bootstrap.min.css">
+    <link rel="stylesheet" href="libs/semantic.min.css">
     <link rel="stylesheet" href="css/popup.css">
-    <script src="lib/jquery.min.js"></script>
-    <script src="lib/popper.min.js"></script>
-    <script src="lib/bootstrap.min.js"></script>
-    <script src="popup.js"></script>
+    <script src="libs/jquery.min.js"></script>
+    <script src="libs/semantic.min.js"></script>
+    <script src="js/popup.js"></script>
+    <title></title>
 </head>
 <body>
 
-<div class="container" id="container">
-
-    <div class="row no-gutters" id="row-1">
-        <div class="col-1"></div>
-        <div class="col-1">
-            <img src="images/icon48.png" id="product-icon" alt="">
+<div id="header-container">
+    <h1 class="ui header" id="header">
+        <img class="ui image" src="images/icon-on.png">
+        <div class="content">
+            Alora
         </div>
-        <div class="col-8">
-            <span id="product-header">cookie manager</span>
-        </div>
-        <div class="col-1">
-            <button type="button" class="btn btn-small hidden-button" id="settings">
-                <img src="images/settings.png" id="settings-img" alt="">
-            </button>
-        </div>
-    </div>
-
-    <div class="row no-gutters" id="row-2">
-        <div class="col-4"></div>
-        <div class="col-4">
-            <div id="large-cookie-container">
-                <img src="images/cookie4.png" id="large-cookie-4" alt="">
-                <img src="images/cookie3.png" id="large-cookie-3" alt="">
-                <img src="images/cookie2.png" id="large-cookie-2" alt="">
-                <img src="images/cookie1.png" id="large-cookie-1" alt="">
-            </div>
-        </div>
-    </div>
-
-    <div class="row no-gutters" id="row-3">
-        <div class="col-4"></div>
-        <div class="col-4">
-            <button type="button" class="btn" id="btn-block-site">block site</button>
-        </div>
-    </div>
-
-    <div class="row no-gutters" id="row-4">
-        <div class="col-12 text-centered">
-            <span id="block-site-hint">Never store my browse histories from this site</span>
-        </div>
-    </div>
-
-    <div class="row no-gutters" id="row-5">
-        <div class="col-12 text-centered">
-            <img id="favicon-img" alt="">
-            <span id="block-site-url">example.url.com</span>
-        </div>
-    </div>
-
-    <div class="row no-gutters" id="row-6">
-        <div class="col-1"></div>
-        <div class="col-4">
-            <span id="incognito-label">incognito mode</span>
-        </div>
-        <div class="col-2">
-            <div class="custom-control custom-switch">
-                <input type="checkbox" class="custom-control-input" id="incognito-switch">
-                <label class="custom-control-label" for="incognito-switch"></label>
-            </div>
-        </div>
-    </div>
-
-    <div class="row" id="foot-space"></div>
-
+    </h1>
 </div>
 
-<!--Cookie manager has been protecting your privacy since -->
+<div id="text-1-container">
+    <span id="text-1">Never track my browsing histories on</span>
+</div>
+
+<div id="text-2-container">
+    <img src="images/icon-128.png" id="favicon-img" alt="">
+    <span id="block-site-url">test.url.com</span>
+</div>
+
+<div id="switch-container">
+    <div class="ui fitted toggle checkbox" id="block-switch">
+        <input type="checkbox">
+        <label></label>
+    </div>
+</div>
+
+<div id="text-3-container">
+    <div>
+        <i class="info circle icon"></i>
+    </div>
+    <div>
+        <span id="text-3">Alora will help you reduce the online ads and unstore all your cookies and cache related to this site on this computer.</span>
+    </div>
+</div>
+
 </body>
 </html>
