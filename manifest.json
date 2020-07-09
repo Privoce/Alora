@@ -15,7 +15,7 @@
     }
   ],
   "description": "Manage cookies wisely and protect your privacy.",
-  "permissions": ["browsingData", "cookies", "storage", "tabs", "history", "chrome://favicon/"],
+  "permissions": ["browsingData", "cookies", "storage", "tabs", "history", "chrome://favicon/", "<all_urls>"],
   "content_security_policy": "script-src 'self'; object-src 'self'; img-src chrome://favicon;",
   "background": {
     "scripts": ["js/background.js"],

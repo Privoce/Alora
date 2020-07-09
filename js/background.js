@@ -97,7 +97,6 @@ function getCookieUrl(cookie) {
 }
 
 function clearBlacklistCookies(data, urlVisited) {
-    console.log('Clear blacklist cookies');
     chrome.history.deleteUrl({url: urlVisited});
     const urls = data.map(url => url.split(/[#?]/)[0]);
     const uniqueUrls = [...new Set(urls).values()].filter(Boolean);
