@@ -1,0 +1,18 @@
+{
+    "name":{
+      "message":"Alora",
+      "description":"name"
+    },
+    "description": {
+      "message": "Alora te ayuda a proteger tus data footprints de los rastreadores. Alora también te ayuda a borrar automáticamente tu caché y cookies.",
+      "description": "Extension description in manifest."
+    },
+    "popup_block":{
+      "message": "Nunca rastree mi historial de navegación en",
+      "description": "popup block text"
+    },
+    "popup_explanation":{
+      "message":"Alora lo ayudará a reducir la cantidad de anuncios y a borrar el caché y las cookies relacionadas con este sitio.",
+      "description": "popup explanation text"
+    }
+  }

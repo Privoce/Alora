@@ -7,6 +7,9 @@ class PopupCache {
 }
 
 function reloadPopup() {
+    // display different user language
+    document.querySelector("#text-1").innerHTML = chrome.i18n.getMessage("popup_block");
+    document.querySelector("#text-3").innerHTML = chrome.i18n.getMessage("popup_explanation");
     let domain = popupCache.domain;
     document.querySelector("#block-site-url").innerHTML = domain;
     siteBlocked = popupCache.blacklist.has(domain);
