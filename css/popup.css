@@ -77,6 +77,38 @@ body {
     background-color: #3835D0 !important;
 }
 
+#block-switch input ~ span#switch-text-off {
+    display: block;
+}
+
+#block-switch input ~ span#switch-text-on {
+    display: none;
+}
+
+#block-switch input:checked ~ span#switch-text-off {
+    display: none;
+}
+
+#block-switch input:checked ~ span#switch-text-on {
+    display: block;
+}
+
+#switch-text-off {
+    position: absolute;
+    top: 3px;
+    left: 22px;
+    font-size: 11px;
+}
+
+#switch-text-on {
+    position: absolute;
+    top: 3px;
+    left: 9px;
+    font-size: 11px;
+    color: #ffffff;
+    z-index: 1;
+}
+
 #text-3-container {
     display: inline-flex;
     padding: 10px 25px 30px 35px;
