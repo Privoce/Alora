@@ -12,7 +12,7 @@
       "description": "popup block text"
     },
     "popup_explanation":{
-      "message":"Alora lo ayudará a reducir la cantidad de anuncios y a borrar el caché y las cookies relacionadas con este sitio.",
+      "message":"Alora lo ayudará a reducir la cantidad de anuncios y a borrar el caché y las cookies relacionadas con este sitio en este computador.",
       "description": "popup explanation text"
     }
   }

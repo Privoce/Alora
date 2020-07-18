@@ -12,7 +12,7 @@
       "description": "popup block text"
     },
     "popup_explanation":{
-      "message":"Alora will help you reduce ads and clean cache and cookies related to this site.",
+      "message":"Alora will help you reduce ads and clean cache and cookies related to this site on this computer.",
       "description": "popup explanation text"
     }
   }

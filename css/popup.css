@@ -17,12 +17,14 @@
 }
 
 body {
-    width: 410px;
+    width: 420px;
+    height: 285px;
 }
 
 #header-container {
     padding-top: 12px;
     padding-left: 18px;
+    padding-bottom: 20px;
 }
 
 #header img {
@@ -38,7 +40,7 @@ body {
 }
 
 #text-1-container {
-    padding-top: 10px;
+    padding-bottom: 15px;
     padding-left: 45px;
 }
 
@@ -50,13 +52,13 @@ body {
 }
 
 #text-2-container {
-    padding-top: 10px;
+    padding-bottom: 20px;
     width: 100%;
     text-align: center;
 }
 
 #favicon-img {
-    width: 24px;
+    width: 18px;
     vertical-align: middle;
 }
 
@@ -69,10 +71,22 @@ body {
 }
 
 #switch-container {
-    padding-top: 15px;
-    padding-left: 185px;
+    padding-bottom: 20px;
+    padding-left: 165px;
 }
-
+#switchsilderlabel:before{
+    height: 36px;
+    width: 90px;
+}
+#switchsilderlabel:after{
+    margin-top: 4px;
+    margin-left: 4px;
+    height: 28px;
+    width: 28px;
+}
+#switchslider:checked~label:after{
+    left: 54px;
+ }
 #block-switch input:checked + label:before {
     background-color: #3835D0 !important;
 }
@@ -95,16 +109,16 @@ body {
 
 #switch-text-off {
     position: absolute;
-    top: 3px;
-    left: 22px;
-    font-size: 11px;
+    top: 9px;
+    left: 35px;
+    font-size: 14px;
 }
 
 #switch-text-on {
     position: absolute;
-    top: 3px;
-    left: 9px;
-    font-size: 11px;
+    top: 9px;
+    left: 25px;
+    font-size: 14px;
     color: #ffffff;
     z-index: 1;
 }
