@@ -36,7 +36,8 @@ var options = {
   entry: {
     background: path.join(__dirname, 'src', 'js', 'background.js'),
     content: path.join(__dirname, 'src', 'js', 'content.js'),
-    youtube: path.join(__dirname, 'src', 'js', 'youtube.js')
+    youtube: path.join(__dirname, 'src', 'js', 'youtube.js'),
+    popup: path.join(__dirname, 'src', 'pages', 'popup.jsx')
   },
   devtool: 'cheap-module-source-map',
   chromeExtensionBoilerplate: {
@@ -183,7 +184,7 @@ var options = {
     //   chunks: ['options'],
     // }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'src', 'popup.html'),
+      template: path.join(__dirname, 'src', 'pages','popup.html'),
       filename: 'popup.html',
       chunks: ['popup'],
     }),
