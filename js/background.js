@@ -76,10 +76,12 @@ function messageHandler(port, msg) {
                     resolve(queryRes);
                 })
             }).then(queryRes => {
-                chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
-                    var currentURL = tabs[0].url;
-                    var currentDomain = new URL(currentURL).hostname;
-                    port.postMessage(generateResponse(msg.reqType, queryRes, currentDomain));
+                chrome.tabs.query({url: ["http://*/*", "https://*/*"], active: true, lastFocusedWindow: true}, function(tabs) {
+                    if (tabs.length != 0) {
+                        var currentURL = tabs[0].url;
+                        var currentDomain = new URL(currentURL).hostname;
+                        port.postMessage(generateResponse(msg.reqType, queryRes, currentDomain));
+                    }
                 });
             });
             break;
