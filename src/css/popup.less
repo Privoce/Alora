@@ -1,0 +1,186 @@
+@primaryColor: #3835d0;
+
+/* montserrat-regular - latin */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Montserrat Regular'), local('Montserrat-Regular'),
+  url('../assets/fonts/montserrat-v14-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */ url('../assets/fonts/montserrat-v14-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* montserrat-700 - latin */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Montserrat Bold'), local('Montserrat-Bold'),
+  url('../assets/fonts/montserrat-v14-latin-700.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */ url('../assets/fonts/montserrat-v14-latin-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+* {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.boldFont {
+  font-weight: 700;
+}
+
+.largeFont {
+  font-size: 24px;
+}
+
+.mediumFont {
+  font-size: 16px;
+}
+
+.smallFont {
+  font-size: 10px;
+}
+
+.primaryColor {
+  color: @primaryColor;
+}
+
+body {
+  width: 420px;
+  height: 285px;
+}
+
+#header {
+  display: flex;
+  margin-top: 24px;
+  line-height: 44px;
+
+  img {
+    width: 50px;
+    height: 53px;
+    margin-left: 28px;
+  }
+
+  span {
+    .boldFont();
+    .largeFont();
+    .primaryColor();
+    margin-left: 7px;
+  }
+}
+
+#prefix {
+  margin-top: 9px;
+  text-align: center;
+
+  span {
+    .boldFont();
+    .mediumFont();
+  }
+}
+
+#url {
+  margin-top: 13px;
+  text-align: center;
+  line-height: 15px;
+
+  img {
+    width: 24px;
+    height: 24px;
+  }
+
+  span {
+    .mediumFont();
+    padding-left: 4px; // safe space
+    padding-top: 4px;
+  }
+}
+
+#switch {
+  margin-top: 20px;
+  text-align: center;
+}
+
+// patch for custom switch size
+.ant-switch {
+  width: 84px;
+  height: 34px;
+  background-color: #ffffff;
+  border: 1px solid @primaryColor;
+  box-sizing: content-box;
+
+  .ant-switch-handle {
+    width: 24px;
+    height: 24px;
+    left: 8px;
+    top: 5px;
+
+    &::before {
+      border-radius: 12px;
+      background-color: @primaryColor;
+    }
+  }
+
+  .ant-switch-inner {
+    font-size: 13px;
+    color: #000000;
+    margin: 0 0 0 25px;
+  }
+
+  &-checked {
+    background-color: @primaryColor;
+
+    .ant-switch-handle {
+      left: 52px;
+      top: 5px;
+
+      &::before {
+        background-color: #ffffff;
+      }
+    }
+
+    .ant-switch-inner {
+      color: #ffffff;
+      margin: 0 22px 0 0;
+    }
+  }
+}
+
+#hint {
+  width: 335px;
+  height: 41px;
+  margin-left: 50px;
+  margin-top: 21px;
+  alignment-baseline: top;
+
+  #hintIcon {
+    width: 16px;
+    height: 16px;
+    margin-left: 1px;
+    margin-right: 1px;
+    line-height: 16px;
+    background-color: @primaryColor;
+    border: 0;
+    border-radius: 16px;
+    display: inline-block;
+    vertical-align:top;
+
+    span {
+      .boldFont();
+      .smallFont();
+      color: #ffffff;
+      position: relative;
+      left: 6.5px;
+      top: -1px;
+    }
+  }
+
+  #hintText {
+    width: 312px;
+    height: 41px;
+    margin-left: 5px;
+    line-height: 12px;
+    display: inline-block;
+
+    span {
+      .smallFont();
+    }
+  }
+}

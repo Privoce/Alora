@@ -49,6 +49,29 @@ var options = {
   },
   module: {
     rules: [
+      {
+        test: /\.less$/,
+        use: [
+            {
+              loader: "style-loader"
+            },
+            {
+              loader: "css-loader"
+            },
+            {
+              loader: "less-loader",
+              options: {
+                lessOptions: {
+                  modifyVars: {
+                    'primary-color': '#3835d0',
+                    'link-color': '#3835d0'
+                  },
+                  javascriptEnabled: true
+                },
+              },
+            },
+        ],
+      },
       // {
       //   test: /\.css$/,
       //   loader: 'style-loader!css-loader',

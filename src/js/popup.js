@@ -13,7 +13,7 @@ function reloadPopup() {
     let domain = popupCache.domain;
     document.querySelector("#block-site-url").innerHTML = domain;
     siteBlocked = popupCache.blacklist.has(domain);
-    document.getElementById('header-image').src = siteBlocked ? 'images/icon-on.png' : 'images/icon-off.png';
+    document.getElementById('header-image').src = siteBlocked ? 'images/hi-on.png' : 'images/hi-off.png';
     if (siteBlocked !== switchChecked) {
         $('#block-switch').checkbox(siteBlocked ? 'set checked' : 'set unchecked');
         switchChecked = siteBlocked;
@@ -66,14 +66,14 @@ document.addEventListener("DOMContentLoaded", function () {
             popupCache.blacklist.add(domain);
             saveChange("update");
             chrome.browserAction.setIcon({"path": "images/ba-on.png"});
-            document.getElementById('header-image').src = 'images/icon-on.png';
+            document.getElementById('header-image').src = 'images/hi-on.png';
         },
         onUnchecked: () => {
             let domain = popupCache.domain;
             popupCache.blacklist.delete(domain);
             saveChange("update");
             chrome.browserAction.setIcon({"path": "images/ba-off.png"});
-            document.getElementById('header-image').src = 'images/icon-off.png';
+            document.getElementById('header-image').src = 'images/hi-off.png';
         }
     });
     port.postMessage(generateRequest("query", ["config", "blacklist"]));

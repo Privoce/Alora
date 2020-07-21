@@ -17,6 +17,7 @@
     "@types/chrome": "0.0.104",
     "@types/react": "^16.9.26",
     "antd": "^4.4.2",
+    "less-loader": "^6.2.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-hot-loader": "^4.12.20"
