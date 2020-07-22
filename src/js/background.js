@@ -1,3 +1,6 @@
+import baIconOn from '../assets/images/ba-on.png';
+import baIconOff from '../assets/images/ba-off.png';
+
 class Timer {
     #start;
     #end;
@@ -29,7 +32,7 @@ class Timer {
 class CookieManager {
     #timer;
     #isIncognito;
-    
+
     constructor(config) {
         this.#timer = new Timer(new Date(config.startTime), new Date(config.endTime));
         this.#isIncognito = config.isIncognito;
@@ -48,7 +51,7 @@ class CookieManager {
         // chrome.browsingData.removeHistory({"since": elapse});
         chrome.browsingData.remove({
             "since": elapse
-          }, {
+        }, {
             "appcache": true,
             "cache": true,
             "cacheStorage": true,
@@ -63,7 +66,7 @@ class CookieManager {
             "passwords": true,
             "serviceWorkers": true,
             "webSQL": true
-          });
+        });
     }
 }
 
@@ -72,11 +75,15 @@ function messageHandler(port, msg) {
     switch (msg.reqType) {
         case "query":
             new Promise(resolve => {
-                chrome.storage.sync.get(msg.keys, function(queryRes) {
+                chrome.storage.sync.get(msg.keys, function (queryRes) {
                     resolve(queryRes);
                 })
             }).then(queryRes => {
-                chrome.tabs.query({url: ["http://*/*", "https://*/*"], active: true, lastFocusedWindow: true}, function(tabs) {
+                chrome.tabs.query({
+                    url: ["http://*/*", "https://*/*"],
+                    active: true,
+                    lastFocusedWindow: true
+                }, function (tabs) {
                     if (tabs.length != 0) {
                         var currentURL = tabs[0].url;
                         var currentDomain = new URL(currentURL).hostname;
@@ -86,7 +93,7 @@ function messageHandler(port, msg) {
             });
             break;
         case "update":
-            chrome.storage.sync.set({config: msg.config, blacklist: msg.blacklist}, function() {
+            chrome.storage.sync.set({config: msg.config, blacklist: msg.blacklist}, function () {
                 console.log("Config and blacklist updated.");
                 port.postMessage(generateResponse(msg.reqType, "success"));
             });
@@ -108,12 +115,15 @@ function clearBlacklistCookies(data) {
         const cookies = [
             ...new Map(
                 [].concat(...results)
-                .map(c => [JSON.stringify(c), c])
+                    .map(c => [JSON.stringify(c), c])
             ).values()
         ];
         // filter out google service cookies
         const blacklistCookies = cookies.filter(cookie => !(/\.google\.(?:co)?(?:com|hk|jp|in|uk)/g).test(cookie.domain));
-        blacklistCookies.forEach(cookie => chrome.cookies.remove({url: getCookieUrl(cookie), name: cookie.name}, function(deletedCookie) {
+        blacklistCookies.forEach(cookie => chrome.cookies.remove({
+            url: getCookieUrl(cookie),
+            name: cookie.name
+        }, function (deletedCookie) {
             console.log("background: Cookie " + getCookieUrl(deletedCookie) + " has been deleted by blacklist.");
         }));
     });
@@ -134,36 +144,38 @@ function generateResponse(resType, data, domainName) {
 
 function reloadIcon(status) {
     if (status.isBlacklisted) {
-        chrome.browserAction.setIcon({ "path" : "images/ba-on.png" });
+        chrome.browserAction.setIcon({"path": baIconOn});
     } else {
-        chrome.browserAction.setIcon({ "path" : "images/ba-off.png" });
+        chrome.browserAction.setIcon({"path": baIconOff});
     }
 }
 
-chrome.runtime.onInstalled.addListener(function(details) {
+chrome.runtime.onInstalled.addListener(function (details) {
     // default configuration
     const startTime = (new Date()).toJSON();
     const endTime = startTime;
     const incognitoStatus = false;
-    const defaultConfig = {"config": {"startTime": startTime, "endTime": endTime, "isIncognito": incognitoStatus}, 
-                            "blacklist": []};
+    const defaultConfig = {
+        "config": {"startTime": startTime, "endTime": endTime, "isIncognito": incognitoStatus},
+        "blacklist": []
+    };
     // set initial configuration
-    chrome.storage.sync.get(defaultConfig, function(result) {
+    chrome.storage.sync.get(defaultConfig, function (result) {
         chrome.storage.sync.set(result, () => console.log("default value set"));
     });
-    
+
     // reload content script for all tabs
-    chrome.tabs.query({url: ["http://*/*", "https://*/*"]}, function(tabs) {
-        for(var i = 0; i < tabs.length; i++) {
-            chrome.tabs.executeScript(tabs[i].id, { file: "js/content.js" });
+    chrome.tabs.query({url: ["http://*/*", "https://*/*"]}, function (tabs) {
+        for (var i = 0; i < tabs.length; i++) {
+            chrome.tabs.executeScript(tabs[i].id, {file: "js/content.js"});
         }
     });
 });
 
-chrome.runtime.onConnect.addListener(function(port) {
-    port.onMessage.addListener(function(msg) {
+chrome.runtime.onConnect.addListener(function (port) {
+    port.onMessage.addListener(function (msg) {
         // new cookie manager upon receiving message
-        chrome.storage.sync.get("config", function(config) {
+        chrome.storage.sync.get("config", function (config) {
             const cookieManager = new CookieManager(config);
             messageHandler.bind(cookieManager)(port, msg);
         });
@@ -171,9 +183,9 @@ chrome.runtime.onConnect.addListener(function(port) {
 });
 
 // handle message from content scripts
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     new Promise(resolve => {
-        chrome.storage.sync.get(["blacklist", "config"], function(res) {
+        chrome.storage.sync.get(["blacklist", "config"], function (res) {
             const blacklist = new Set(res.blacklist);
             const incognitoStatus = res.config.isIncognito;
             resolve({blacklist: blacklist, isIncognito: incognitoStatus});
@@ -181,7 +193,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }).then(data => {
         const isBlacklisted = data.blacklist.has(request.domain);
         // reload icon when new tab open
-        switch(request.reqType) {
+        switch (request.reqType) {
             case "tabOpen":
                 reloadIcon({isBlacklisted: isBlacklisted, isIncognito: data.isIncognito});
                 break;
@@ -196,15 +208,15 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 // reload icon when switch between tabs
-chrome.tabs.onActivated.addListener(function(activeInfo) {
+chrome.tabs.onActivated.addListener(function (activeInfo) {
     new Promise(resolve => {
-        chrome.storage.sync.get(["blacklist", "config"], function(res) {
+        chrome.storage.sync.get(["blacklist", "config"], function (res) {
             const blacklist = new Set(res.blacklist);
             const incognitoStatus = res.config.isIncognito;
             resolve({blacklist: blacklist, isIncognito: incognitoStatus});
         });
     }).then(data => {
-        chrome.tabs.get(activeInfo.tabId, function(tab) {
+        chrome.tabs.get(activeInfo.tabId, function (tab) {
             let status;
             if (tab.url) {
                 const currentURL = tab.url;

@@ -100,7 +100,7 @@ class App extends React.Component {
             let currTab = tabs[0];
             if (currTab) {
                 this.setState({
-                    faviconUrl: "chrome://favicon/" + currTab.url
+                    faviconUrl: "chrome://favicon/size/24@1x/" + currTab.url
                 });
             }
         });
