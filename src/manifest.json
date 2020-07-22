@@ -10,7 +10,7 @@
       "all_frames": true
     },
     {
-      "matches": ["<all_urls>"],
+      "matches": ["http://*/*", "https://*/*"],
       "js": ["content.bundle.js"]
     }
   ],

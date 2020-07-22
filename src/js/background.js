@@ -1,6 +1,3 @@
-import baIconOn from '../assets/images/ba-on.png';
-import baIconOff from '../assets/images/ba-off.png';
-
 class Timer {
     #start;
     #end;
@@ -79,10 +76,12 @@ function messageHandler(port, msg) {
                     resolve(queryRes);
                 })
             }).then(queryRes => {
-                chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
-                    var currentURL = tabs[0].url;
-                    var currentDomain = new URL(currentURL).hostname;
-                    port.postMessage(generateResponse(msg.reqType, queryRes, currentDomain));
+                chrome.tabs.query({url: ["http://*/*", "https://*/*"], active: true, lastFocusedWindow: true}, function(tabs) {
+                    if (tabs.length != 0) {
+                        var currentURL = tabs[0].url;
+                        var currentDomain = new URL(currentURL).hostname;
+                        port.postMessage(generateResponse(msg.reqType, queryRes, currentDomain));
+                    }
                 });
             });
             break;
@@ -99,8 +98,7 @@ function getCookieUrl(cookie) {
     return "http" + (cookie.secure ? "s" : "") + "://" + cookie.domain + cookie.path;
 }
 
-function clearBlacklistCookies(data, urlVisited) {
-    chrome.history.deleteUrl({url: urlVisited});
+function clearBlacklistCookies(data) {
     const urls = data.map(url => url.split(/[#?]/)[0]);
     const uniqueUrls = [...new Set(urls).values()].filter(Boolean);
     Promise.all(uniqueUrls.map(url => new Promise(resolve => {
@@ -121,6 +119,10 @@ function clearBlacklistCookies(data, urlVisited) {
     });
 }
 
+function clearBlacklistHistory(urlVisited) {
+    chrome.history.deleteUrl({url: urlVisited});
+}
+
 function generateResponse(resType, data, domainName) {
     switch (resType) {
         case "query":
@@ -132,23 +134,30 @@ function generateResponse(resType, data, domainName) {
 
 function reloadIcon(status) {
     if (status.isBlacklisted) {
-        chrome.browserAction.setIcon({ "path" : baIconOn });
+        chrome.browserAction.setIcon({ "path" : "images/ba-on.png" });
     } else {
-        chrome.browserAction.setIcon({ "path" : baIconOff });
+        chrome.browserAction.setIcon({ "path" : "images/ba-off.png" });
     }
 }
 
 chrome.runtime.onInstalled.addListener(function(details) {
-	// default configuration
-	const startTime = (new Date()).toJSON();
-	const endTime = startTime;
-	const incognitoStatus = false;
-	const defaultConfig = {"config": {"startTime": startTime, "endTime": endTime, "isIncognito": incognitoStatus}, 
-							"blacklist": []};
-	// set initial configuration
-	chrome.storage.sync.get(defaultConfig, function(result) {
-		chrome.storage.sync.set(result, () => console.log("default value set"));
-	});
+    // default configuration
+    const startTime = (new Date()).toJSON();
+    const endTime = startTime;
+    const incognitoStatus = false;
+    const defaultConfig = {"config": {"startTime": startTime, "endTime": endTime, "isIncognito": incognitoStatus}, 
+                            "blacklist": []};
+    // set initial configuration
+    chrome.storage.sync.get(defaultConfig, function(result) {
+        chrome.storage.sync.set(result, () => console.log("default value set"));
+    });
+    
+    // reload content script for all tabs
+    chrome.tabs.query({url: ["http://*/*", "https://*/*"]}, function(tabs) {
+        for(var i = 0; i < tabs.length; i++) {
+            chrome.tabs.executeScript(tabs[i].id, { file: "js/content.js" });
+        }
+    });
 });
 
 chrome.runtime.onConnect.addListener(function(port) {
@@ -178,7 +187,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                 break;
             case "tabClose":
                 if (isBlacklisted) {
-                    clearBlacklistCookies(request.data, request.url);
+                    clearBlacklistCookies(request.data);
+                    clearBlacklistHistory(request.url);
                 }
                 break;
         }
