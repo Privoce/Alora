@@ -172,7 +172,7 @@ var options = {
     new CopyWebpackPlugin(
       [
         {
-          from: 'src/assets/images/*',
+          from: 'src/assets/images/icon-*\.png',
           flatten: true,
           to: path.join(__dirname, 'build'),
           force: true,

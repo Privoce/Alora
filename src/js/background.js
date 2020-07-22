@@ -1,3 +1,6 @@
+import baIconOn from '../assets/images/ba-on.png';
+import baIconOff from '../assets/images/ba-off.png';
+
 class Timer {
     #start;
     #end;
@@ -129,9 +132,9 @@ function generateResponse(resType, data, domainName) {
 
 function reloadIcon(status) {
     if (status.isBlacklisted) {
-        chrome.browserAction.setIcon({ "path" : "images/ba-on.png" });
+        chrome.browserAction.setIcon({ "path" : baIconOn });
     } else {
-        chrome.browserAction.setIcon({ "path" : "images/ba-off.png" });
+        chrome.browserAction.setIcon({ "path" : baIconOff });
     }
 }
 
