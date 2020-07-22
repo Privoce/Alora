@@ -80,7 +80,6 @@ function messageHandler(port, msg) {
                 })
             }).then(queryRes => {
                 chrome.tabs.query({
-                    url: ["http://*/*", "https://*/*"],
                     active: true,
                     lastFocusedWindow: true
                 }, function (tabs) {
@@ -167,7 +166,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
     // reload content script for all tabs
     chrome.tabs.query({url: ["http://*/*", "https://*/*"]}, function (tabs) {
         for (var i = 0; i < tabs.length; i++) {
-            chrome.tabs.executeScript(tabs[i].id, {file: "js/content.js"});
+            chrome.tabs.executeScript(tabs[i].id, {file: 'content.bundle.js'});
         }
     });
 });
