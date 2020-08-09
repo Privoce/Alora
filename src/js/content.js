@@ -1,15 +1,16 @@
 function sendData(event) {
     const data = performance.getEntriesByType("resource").map(e => e.name);
     chrome.runtime.sendMessage({reqType: "tabClose", domain: location.hostname, url: location.href, data: data});
-    return;
 }
 
 // Content script
 function main() {
     // Set up content script
-    chrome.runtime.sendMessage({reqType: "tabOpen", domain: location.hostname});
+    // chrome.runtime.sendMessage({reqType: "tabOpen"});
     window.addEventListener("beforeunload", sendData);
 }
+
+const destructionEvent = 'destructmyextension_' + chrome.runtime.id;
 
 function destructor() {
     // Destruction is needed only once
@@ -18,7 +19,6 @@ function destructor() {
     window.removeEventListener("beforeunload", sendData);
 }
 
-var destructionEvent = 'destructmyextension_' + chrome.runtime.id;
 // Unload previous content script if needed
 document.dispatchEvent(new CustomEvent(destructionEvent));
 document.addEventListener(destructionEvent, destructor);
