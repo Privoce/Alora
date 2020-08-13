@@ -1,4 +1,4 @@
-function sendData(event) {
+function sendData() {
     const data = performance.getEntriesByType("resource").map(e => e.name);
     chrome.runtime.sendMessage({reqType: "tabClose", domain: location.hostname, url: location.href, data: data});
 }
@@ -6,7 +6,6 @@ function sendData(event) {
 // Content script
 function main() {
     // Set up content script
-    // chrome.runtime.sendMessage({reqType: "tabOpen"});
     window.addEventListener("beforeunload", sendData);
 }
 
