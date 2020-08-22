@@ -1,24 +1,38 @@
 {
   "manifest_version": 2,
-  "name": "Alora",
-  "version": "2.4",
   "content_scripts": [
     {
-      "matches": ["*://*.youtube.com/*"],
-      "js": ["youtube.bundle.js"],
+      "matches": [
+        "*://*.youtube.com/*"
+      ],
+      "js": [
+        "youtube.bundle.js"
+      ],
       "run_at": "document_end",
       "all_frames": true
     },
     {
-      "matches": ["*://*/*"],
-      "js": ["content.bundle.js"]
+      "matches": [
+        "*://*/*"
+      ],
+      "js": [
+        "content.bundle.js"
+      ]
     }
   ],
-  "description": "Yet Another Cookie Manager",
-  "permissions": ["cookies", "storage", "tabs", "history", "chrome://favicon/", "<all_urls>"],
+  "permissions": [
+    "cookies",
+    "storage",
+    "tabs",
+    "history",
+    "chrome://favicon/",
+    "<all_urls>"
+  ],
   "content_security_policy": "script-src 'self'; object-src 'self'; img-src chrome://favicon;",
   "background": {
-    "scripts": ["background.bundle.js"],
+    "scripts": [
+      "background.bundle.js"
+    ],
     "persistent": false
   },
   "browser_action": {

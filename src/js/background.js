@@ -1,5 +1,5 @@
-import baIconOn from '../assets/images/ba-on.png';
-import baIconOff from '../assets/images/ba-off.png';
+import baIconOn from '../../public/ba-on.png';
+import baIconOff from '../../public/ba-off.png';
 import {StorageAPI} from "./StorageAPI";
 
 function getDomain(url) {
@@ -52,6 +52,7 @@ async function clearBlacklistCookies(data) {
             name: cookie.name
         }, function (deletedCookie) {
             console.log("background: Cookie " + getCookieUrl(deletedCookie) + " has been deleted by blacklist.");
+            resolve();
         });
     })));
 }
@@ -68,7 +69,7 @@ chrome.tabs.onActivated.addListener(async () => {
 });
 
 // reload browserAction icon when tabs update
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
     if (changeInfo.status === 'complete') {
         await reloadIcon();
     }
