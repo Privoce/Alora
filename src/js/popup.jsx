@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom'
-import {Switch, Menu, Badge, Popover} from 'antd';
+import {Switch, Menu, Badge, Popover, List} from 'antd';
+import Scrollbar from 'react-scrollbars-custom';
 import "antd/dist/antd.less";
 import '../css/popup.less';
 import headerIcon from '../assets/images/magic.png';
@@ -65,6 +66,63 @@ const ToggleSwitch = (props) => {
         </div>
     )
 }
+
+const InfoSitesList = () => {
+    return (
+        <div className='infoSitesList'>
+            <span>You are currently erasing the browsing history from the following site(s):</span>
+        </div>
+    )
+};
+
+const domains = [
+    'dribbble.com',
+    'nyu.edu',
+    'instagram.com',
+    'wenqian.design',
+    'dribbble.com',
+    'nyu.edu',
+    'instagram.com',
+    'wenqian.design'
+];
+
+const SingleSite = (props) => {
+    return (
+        <div className='singleSite'>
+            <img src={headerIcon} onDragStart={onDragStart} alt=''/>
+            <span>{props.site}</span>
+        </div>
+    );
+}
+
+const SitesList = () => {
+    return (
+        <div className='sitesList'>
+            <Scrollbar style={{ height: 180}}>
+                <List
+                    className='list'
+                    dataSource={domains}
+                    renderItem={item => (
+                        <List.Item
+                            actions={[<a className='remove-site'>Remove</a>]}
+                        >
+                            <SingleSite site={item}/>
+                        </List.Item>
+                    )}
+                />
+            </Scrollbar>
+        </div>
+    );
+};
+
+const ManageTab = () => {
+    return (
+        <div className='manageTab'>
+            <InfoSitesList/>
+            <SitesList/>
+        </div>
+    );
+};
 
 const HomeTab = () => {
     return (

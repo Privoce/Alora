@@ -43,5 +43,9 @@
     "webpack-merge": "^5.1.1",
     "webpackbar": "^4.0.0",
     "yargs": "^15.4.1"
+  },
+  "dependencies": {
+    "react-infinite-scroller": "^1.2.4",
+    "react-scrollbars-custom": "^4.0.25"
   }
 }
