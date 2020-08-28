@@ -96,21 +96,36 @@ body {
   }
 }
 
-.homeTabBox {
+.home-tab {
+  margin-top: 2px;
+}
+
+.home-tab-box {
   background: rgba(183, 177, 255, 0.2);
   border-radius: 20px;
   overflow: hidden;
   margin-top: 18px;
+  text-align: center;
+
+  &-cookie .ant-switch {
+    margin-top: 5px;
+    margin-bottom: 20px;
+  }
+
+  &-trackers .ant-switch {
+    margin-top: 12px;
+    margin-bottom: 15px;
+  }
 }
 
-.tagLine {
+.tagline {
   display: flex;
   margin: 16px auto 0;
   width: fit-content;
   height: 34px;
   padding-top: 5px;
 
-  .tagLineIcon {
+  .tagline-icon {
     width: 16px;
     height: 16px;
     margin-right: 11px;
@@ -121,7 +136,6 @@ body {
     span {
       color: @primaryColor;
       position: relative;
-      left: 5.5px;
       top: -5px;
       font-size: 10px;
       font-weight: bold;
@@ -129,7 +143,7 @@ body {
     }
   }
 
-  .tagLineContent {
+  .tagline-content {
     span {
       font-size: 14px;
       font-weight: bold;
@@ -149,79 +163,142 @@ body {
   }
 }
 
-.domainDisplay {
+.domain-display {
   width: fit-content;
   height: 34px;
   margin: -3px auto 0;
   padding-top: 5px;
+  display: flex;
+  overflow: hidden;
 
-  .domainDisplayIcon {
+  img {
     width: 20px;
     height: 20px;
   }
 
-  .domainDisplayContent {
+  span {
     font-size: 14px;
     font-weight: normal;
+    margin-left: 10px;
+    line-height: 20px;
   }
 }
 
-.toggleSwitch {
-  margin-left: auto;
-  margin-right: auto;
-  width: fit-content;
+.ant-switch {
+  width: 60px;
+  height: 34px;
+  background-color: rgba(0, 0, 0, 0);
+  border: 1px solid @primaryColor;
+  box-sizing: content-box;
+  border-radius: 30px;
 
-  .ant-switch {
-    width: 60px;
-    height: 34px;
-    background-color: rgba(0, 0, 0, 0);
-    border: 1px solid @primaryColor;
-    box-sizing: content-box;
-    border-radius: 30px;
+  .ant-switch-handle {
+    width: 24px;
+    height: 24px;
+    left: 5px;
+    top: 5px;
+
+    &::before {
+      border-radius: 12px;
+      background-color: @primaryColor;
+    }
+  }
+
+  .ant-switch-inner {
+    font-size: 13px;
+    color: #000000;
+    margin: 0 0 0 25px;
+  }
+
+  &-checked {
+    background-color: @primaryColor;
 
     .ant-switch-handle {
-      width: 24px;
-      height: 24px;
-      left: 5px;
+      left: 31px;
       top: 5px;
 
       &::before {
-        border-radius: 12px;
-        background-color: @primaryColor;
+        background-color: #ffffff;
       }
     }
 
     .ant-switch-inner {
-      font-size: 13px;
-      color: #000000;
-      margin: 0 0 0 25px;
-    }
-
-    &-checked {
-      background-color: @primaryColor;
-
-      .ant-switch-handle {
-        left: 31px;
-        top: 5px;
-
-        &::before {
-          background-color: #ffffff;
-        }
-      }
-
-      .ant-switch-inner {
-        color: #ffffff;
-        margin: 0 22px 0 0;
-      }
+      color: #ffffff;
+      margin: 0 22px 0 0;
     }
   }
 }
 
-.manageTab {
-  margin-top: 18px;
+.trackers-tab {
+  margin-top: 17px;
+
+  .ant-empty {
+    text-align: center;
+    margin: 0;
+
+    &-image {
+      width: 159px;
+      height: 180px;
+      margin: 24px auto 14px;
+    }
+
+    &-description {
+      font-size: 14px;
+      height: 34px;
+      line-height: 34px;
+    }
+  }
 }
 
-.infoSitesList {
+.trackers-list {
+  height: 226px;
+
+  .ant-list-item span {
+    font-size: 14px;
+    overflow: hidden;
+  }
+
+  .trackers-list-header {
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .single-tracker-action {
+    margin-right: 9px;
+
+    img {
+      width: 19px;
+      height: 20px;
+      margin-right: 11px;
+    }
+  }
+
+  .ant-btn {
+    font-size: 10px;
+    height: 24px;
+    margin-top: 18px;
+    padding: 0 10px;
+    border-radius: 5px;
+    border: #53da81 1px solid;
+  }
+
+  .trust-site-btn-trusted {
+    background-color: #53da81;
+    color: #ffffff;
+  }
+}
+
+.manage-tab {
+  margin-top: 18px;
+
+  .ant-empty {
+    height: 180px;
+    margin: 0;
+    padding-top: 60px;
+  }
+}
+
+.info-sites-list {
   margin: 0 15px;
 
   span {
@@ -231,24 +308,14 @@ body {
   }
 }
 
-.sitesList {
-  margin: 10px 15px;
-  max-height: 180px;
-
-  .remove-site {
-    font-size: 10px;
-    line-height: 12px;
-    color: #000000;
-  }
-
-  .list {
-    margin-right: 10px;
-  }
+.sites-list {
+  height: 180px;
 }
 
-.singleSite {
+.single-site {
   width: fit-content;
   height: auto;
+  display: flex;
 
   img {
     width: 20px;
@@ -258,8 +325,67 @@ body {
 
   span {
     font-size: 14px;
-    line-height: 17px;
+    line-height: 20px;
     font-weight: normal;
     color: #000000;
+  }
+}
+
+.single-site-action {
+  width: 53px;
+  margin-right: 22px;
+
+  a {
+    font-size: 10px;
+    line-height: 20px;
+    color: #000000;
+    transition: color 100ms ease-in-out;
+
+    &:hover {
+      color: @primaryColor;
+    }
+  }
+}
+
+.add-site-input {
+  .ant-input-affix-wrapper {
+    margin-top: 18px;
+    width: 280px;
+    height: 30px;
+    border: @primaryColor 1px solid;
+    border-radius: 30px;
+    margin-right: 17px;
+
+    .ant-input-suffix img {
+      width: 17px;
+      height: 18px;
+    }
+  }
+
+  span {
+    font-size: 10px;
+    font-weight: bold;
+    color: @primaryColor;
+    cursor: pointer;
+    transition: color 100ms ease-in-out;
+    line-height: 20px;
+
+    &:hover {
+      color: #000000;
+    }
+  }
+}
+
+.ant-list {
+  margin-right: 10px;
+}
+
+.ScrollbarsCustom-Track {
+  background-color: rgba(0, 0, 0, 0) !important;
+  width: 8px !important;
+
+  .ScrollbarsCustom-Thumb {
+    background-color: #dbdbdb !important;
+    cursor: default !important;
   }
 }
