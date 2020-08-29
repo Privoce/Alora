@@ -3,16 +3,6 @@
   "content_scripts": [
     {
       "matches": [
-        "*://*.youtube.com/*"
-      ],
-      "js": [
-        "youtube.bundle.js"
-      ],
-      "run_at": "document_end",
-      "all_frames": true
-    },
-    {
-      "matches": [
         "*://*/*"
       ],
       "js": [
@@ -26,7 +16,7 @@
     "tabs",
     "history",
     "chrome://favicon/",
-    "<all_urls>"
+    "*://*/*"
   ],
   "content_security_policy": "script-src 'self'; object-src 'self'; img-src chrome://favicon;",
   "background": {
