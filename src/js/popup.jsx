@@ -5,7 +5,6 @@ import Scrollbar from 'react-scrollbars-custom';
 import {observable, autorun} from 'mobx';
 import {observer} from 'mobx-react';
 
-import "antd/dist/antd.less";
 import '../css/popup.less';
 
 import headerIcon from '../assets/images/magic.png';
@@ -24,8 +23,9 @@ const stripOverflow = (txt, max = 24) =>
     txt.length <= max ? txt : txt.slice(0, max) + '...';
 
 const getFaviconUrl = (domain) =>
-    'chrome://favicon/size/20px@1x/http://' + domain;
+    'chrome://favicon/size/20@1x/http://' + domain;
 
+@observer
 class Header extends React.Component {
     render() {
         return (
@@ -69,6 +69,7 @@ class MenuBar extends React.Component {
     }
 }
 
+@observer
 class TagLine extends React.Component {
     render() {
         return (
@@ -139,7 +140,7 @@ class HomeTab extends React.Component {
                 </div>
                 <div className='home-tab-box home-tab-box-trackers'>
                     <TagLine content='Blocking trackers on all sites'
-                             hint='Alora blocks trackers and other malicious scripts from followling you around online to collect information about your browsing habits and interests.'/>
+                             hint='Alora blocks trackers and other malicious scripts from following you around online to collect information about your browsing habits and interests.'/>
                     <ToggleSwitch
                         getChecked={this.getTrackersSwitchState}
                         onChange={this.toggleTrackersSwitchState}
@@ -193,7 +194,7 @@ class TrackersList extends React.Component {
                 {appState.trackersTabState.listItems.map(item => {
                     if (item.isHeader) {
                         return (
-                            <List.Item>
+                            <List.Item key={item.content}>
                                 <span className='trackers-list-header'>{stripOverflow(item.content)}</span>
                             </List.Item>
                         );
@@ -267,6 +268,7 @@ class TrackersTab extends React.Component {
     }
 }
 
+@observer
 class InfoSitesList extends React.Component {
     render() {
         return (
@@ -277,17 +279,18 @@ class InfoSitesList extends React.Component {
     }
 }
 
+@observer
 class SingleSite extends React.Component {
     render() {
         return (
             <>
                 <div className='single-site'>
-                    <img src={getFaviconUrl(this.props.domain)} onDragStart={preventDrag} alt=''/>
-                    <span>{stripOverflow(this.props.domain)}</span>
+                    <img src={getFaviconUrl(this.props.item)} onDragStart={preventDrag} alt=''/>
+                    <span>{stripOverflow(this.props.item)}</span>
                 </div>
                 <div className='single-site-action'>
                     <a onClick={() => {
-                        appState.manageTabState.listItems.remove(this.props.domain);
+                        appState.manageTabState.listItems.remove(this.props.item);
                     }}>Remove</a>
                 </div>
             </>
@@ -302,7 +305,7 @@ class SitesList extends React.Component {
             <List>
                 {appState.manageTabState.listItems.map(item => {
                     return (
-                        <List.Item>
+                        <List.Item key={item}>
                             <SingleSite item={item}/>
                         </List.Item>
                     );
@@ -314,23 +317,31 @@ class SitesList extends React.Component {
 
 @observer
 class AddSiteInput extends React.Component {
-    input = {
-        value: ''
+    handleChange = e => {
+        appState.manageTabState.inputText = e.target.value;
     };
 
-    handleChange = e => {
-        console.log(e.target.value);
-        this.input.value = e.target.value;
-    }
-
     handleClick = () => {
-        // const newSite =
+        appState.manageTabState.listItems = ['1','2','3'];
+        // if (appState.manageTabState.inputText) {
+        //     if (!appState.manageTabState.listItems.includes(appState.manageTabState.inputText)) {
+        //         appState.manageTabState.listItems.push(appState.manageTabState.inputText);
+        //         appState.manageTabState.inputText = '';
+        //     } else {
+        //         appState.manageTabState.inputText = '';
+        //         appState.manageTabState.inputPlaceholder = 'Domain already exists';
+        //     }
+        // }
     }
 
     render() {
         return (
             <div className='add-site-input'>
-                <Input suffix={<img src={inputIcon} alt=''/>} value={this.input.value} onChange={this.handleChange}/>
+                <Input
+                    suffix={<img src={inputIcon} alt=''/>}
+                    value={appState.manageTabState.inputText}
+                    onChange={this.handleChange}
+                />
                 <span onClick={this.handleClick}>Add</span>
             </div>
         );
@@ -370,28 +381,6 @@ class ManageTab extends React.Component {
 
 @observer
 class App extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    // componentDidMount() {
-    //     const asyncFunc = async () => {
-    //         // only invoke after first rendering
-    //         let response = await new Promise(resolve => {
-    //             chrome.runtime.sendMessage({reqType: "popupQuery"}, response1 => {
-    //                 resolve(response1);
-    //             });
-    //         });
-    //         this.setState({
-    //             enabled: response.enabled,
-    //             domain: response.domain,
-    //             faviconUrl: response.faviconUrl,
-    //             locked: response.locked
-    //         });
-    //     };
-    //     asyncFunc.bind(this)();
-    // }
-
     render() {
         return (
             <>
@@ -405,21 +394,67 @@ class App extends React.Component {
     }
 }
 
-// data for test purpose
 const appState = observable({
-    activeTabKey: 'manage',
+    activeTabKey: 'home',
     homeTabState: {
-        faviconUrl: 'chrome://favicon/size/24@1x/https://www.google.com',
         domain: 'www.google.com',
         cookieSwitchState: false,
         trackersSwitchState: true
     },
     trackersTabState: {
-        listItems: []
+        listItems: [
+            {
+                isHeader: true,
+                content: 'Group 1',
+                trusted: false
+            },
+            {
+                isHeader: false,
+                content: 'FB Tracker',
+                trusted: false
+            },
+            {
+                isHeader: false,
+                content: 'GG Tracker',
+                trusted: false
+            },
+            {
+                isHeader: false,
+                content: 'TWT Tracker',
+                trusted: false
+            },
+            {
+                isHeader: false,
+                content: 'AMZ Tracker',
+                trusted: false
+            },
+            {
+                isHeader: true,
+                content: 'Group 2',
+                trusted: false
+            },
+            {
+                isHeader: false,
+                content: 'Advertise',
+                trusted: false
+            }
+        ]
     },
     manageTabState: {
-        listItems: []
+        inputText: '',
+        inputPlaceholder: '',
+        listItems: [
+            'www.baidu.com',
+            'www.google.com',
+            'www.facebook.com',
+            'www.tomzhu.site'
+        ]
     }
+});
+
+autorun(() => {
+    console.log('manage tab list is now:');
+    console.log(appState.manageTabState.listItems.toJS());
 });
 
 ReactDOM.render(<App/>, document.getElementById('root'));
