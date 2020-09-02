@@ -1,18 +1,78 @@
 {
-  "name": {
+  "extName": {
     "message": "Alora",
-    "description": "name"
+    "description": "extension name, only for manifest.json"
   },
-  "description": {
-    "message": "Alora te ajuda a proteger suas pegadas digitais dos rastreadores. Alora também te auxilia a limpar automaticamente o cache e os cookies.",
-    "description": "Extension description in manifest."
+  "extDescription": {
+    "message": "Proteja sua privacidade de dados online",
+    "description": "extension description, only for manifest.json"
   },
-  "popup_block": {
-    "message": "Nunca rastreie o meu histórico de navegação em",
-    "description": "popup block text"
+  "title": {
+    "message": "Alora",
+    "description": "popup title"
   },
-  "popup_explanation": {
-    "message": "O Alora vai te ajudar a reduzir a quantidade de anúncios e a limpar o cache e os cookies relacionados a este site.",
-    "description": "popup explanation text"
+  "subTitle": {
+    "message": "Proteja sua privacidade de dados online",
+    "description": "popup sub title"
+  },
+  "homeTab": {
+    "message": "Casa",
+    "description": "home tab text"
+  },
+  "trackerTab": {
+    "message": "Trackers",
+    "description": "tracker tab text"
+  },
+  "manageTab": {
+    "message": "Gerir",
+    "description": "manage tab text"
+  },
+  "cookieSwitchText": {
+    "message": "Nunca armazene meu histórico de navegação em",
+    "description": "text above cookie switch"
+  },
+  "cookieSwitchHint": {
+    "message": "Ao apagar o seu histórico de navegação, Alora o ajudará a reduzir anúncios e limpar o cache e os cookies relacionados a este site em seu computador.",
+    "description": "hint above cookie switch"
+  },
+  "trackerSwitchText": {
+    "message": "Rastreador de bloqueio em todos os sites",
+    "description": "text above tracker switch"
+  },
+  "trackerSwitchHint": {
+    "message": "Alora bloqueia rastreadores e outros scripts maliciosos de seguir você online para coletar informações sobre seus hábitos de navegação e interesses.",
+    "description": "hint above tracker switch"
+  },
+  "noTracker": {
+    "message": "Não há rastreador neste site!",
+    "description": "empty message on tracker tab"
+  },
+  "trustSite": {
+    "message": "Trust Site",
+    "description": "trust site button on tracker tab"
+  },
+  "distrustSite": {
+    "message": "Local de Desconfiança",
+    "description": "distrust site button on tracker tab"
+  },
+  "siteListHint": {
+    "message": "No momento, você está apagando o histórico de navegação dos seguintes sites:",
+    "description": "hint text above site list on manage tab"
+  },
+  "siteListRemove": {
+    "message": "Remover",
+    "description": "remove button text of site list on manage tab"
+  },
+  "siteListAdd": {
+    "message": "Adicionar",
+    "description": "add button text of site list on manage tab"
+  },
+  "siteListDomainExists": {
+    "message": "Domínio já existe",
+    "description": "error message that domain already exists on manage tab"
+  },
+  "noSite": {
+    "message": "Sem Site",
+    "description": "empty message on manage tab"
   }
 }

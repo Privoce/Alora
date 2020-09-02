@@ -1,18 +1,78 @@
 {
-  "name": {
+  "extName": {
     "message": "Alora",
-    "description": "name"
+    "description": "extension name, only for manifest.json"
   },
-  "description": {
-    "message": "Alora te ayuda a proteger tus data footprints de los rastreadores. Alora también te ayuda a borrar automáticamente tu caché y cookies.",
-    "description": "Extension description in manifest."
+  "extDescription": {
+    "message": "Proteja la privacidad de sus datos en línea",
+    "description": "extension description, only for manifest.json"
   },
-  "popup_block": {
-    "message": "Nunca rastree mi historial de navegación en",
-    "description": "popup block text"
+  "title": {
+    "message": "Alora",
+    "description": "popup title"
   },
-  "popup_explanation": {
-    "message": "Alora lo ayudará a reducir la cantidad de anuncios y a borrar el caché y las cookies relacionadas con este sitio.",
-    "description": "popup explanation text"
+  "subTitle": {
+    "message": "Proteja la privacidad de sus datos en línea",
+    "description": "popup sub title"
+  },
+  "homeTab": {
+    "message": "Hogar",
+    "description": "home tab text"
+  },
+  "trackerTab": {
+    "message": "Rastreadoras",
+    "description": "tracker tab text"
+  },
+  "manageTab": {
+    "message": "Gestionar",
+    "description": "manage tab text"
+  },
+  "cookieSwitchText": {
+    "message": "Nunca almacene mi historial de navegación en",
+    "description": "text above cookie switch"
+  },
+  "cookieSwitchHint": {
+    "message": "Al borrar su historial de navegación, Alora lo ayudará a reducir los anuncios y limpiar el caché y las cookies relacionadas con este sitio en su computadora.",
+    "description": "hint above cookie switch"
+  },
+  "trackerSwitchText": {
+    "message": "Rastreador de bloqueo en todos los sitios",
+    "description": "text above tracker switch"
+  },
+  "trackerSwitchHint": {
+    "message": "Alora bloquea los rastreadores y otros scripts maliciosos para que no lo sigan en línea para recopilar información sobre sus hábitos e intereses de navegación.",
+    "description": "hint above tracker switch"
+  },
+  "noTracker": {
+    "message": "¡No hay rastreadores en este sitio!",
+    "description": "empty message on tracker tab"
+  },
+  "trustSite": {
+    "message": "Sitio de confianza",
+    "description": "trust site button on tracker tab"
+  },
+  "distrustSite": {
+    "message": "Sitio de desconfianza",
+    "description": "distrust site button on tracker tab"
+  },
+  "siteListHint": {
+    "message": "Actualmente, está borrando el historial de navegación de los siguientes sitios:",
+    "description": "hint text above site list on manage tab"
+  },
+  "siteListRemove": {
+    "message": "Eliminar",
+    "description": "remove button text of site list on manage tab"
+  },
+  "siteListAdd": {
+    "message": "Agregar",
+    "description": "add button text of site list on manage tab"
+  },
+  "siteListDomainExists": {
+    "message": "El dominio ya existe",
+    "description": "error message that domain already exists on manage tab"
+  },
+  "noSite": {
+    "message": "Sin sitio",
+    "description": "empty message on manage tab"
   }
 }

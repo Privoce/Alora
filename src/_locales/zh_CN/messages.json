@@ -1,18 +1,78 @@
 {
-  "name": {
+  "extName": {
     "message": "Alora",
-    "description": "name"
+    "description": "extension name, only for manifest.json"
   },
-  "description": {
-    "message": "Alora 帮助你保护个人信息不被泄露，并自动清理缓存与历史记录. ",
-    "description": "Extension description in manifest."
+  "extDescription": {
+    "message": "保护您的浏览隐私",
+    "description": "extension description, only for manifest.json"
   },
-  "popup_block": {
-    "message": "在此网站无痕浏览：",
-    "description": "popup block text"
+  "title": {
+    "message": "Alora",
+    "description": "popup title"
   },
-  "popup_explanation": {
-    "message": "Alora帮助你保护个人信息并减少广告",
-    "description": "popup explanation text"
+  "subTitle": {
+    "message": "保护您的浏览隐私",
+    "description": "popup sub title"
+  },
+  "homeTab": {
+    "message": "主页",
+    "description": "home tab text"
+  },
+  "trackerTab": {
+    "message": "追踪行为",
+    "description": "tracker tab text"
+  },
+  "manageTab": {
+    "message": "管理",
+    "description": "manage tab text"
+  },
+  "cookieSwitchText": {
+    "message": "本站自动删除历史记录",
+    "description": "text above cookie switch"
+  },
+  "cookieSwitchHint": {
+    "message": "通过自动删除浏览历史记录，Alora将帮助您减少广告并清理您计算机上与此网站相关的缓存和cookie。",
+    "description": "hint above cookie switch"
+  },
+  "trackerSwitchText": {
+    "message": "在所有网站上阻止跟踪行为",
+    "description": "text above tracker switch"
+  },
+  "trackerSwitchHint": {
+    "message": "Alora阻止该网页的跟踪行为和其他恶意脚本收集有关您的浏览习惯和兴趣的信息。",
+    "description": "hint above tracker switch"
+  },
+  "noTracker": {
+    "message": "该网站上没有追踪行为！",
+    "description": "empty message on tracker tab"
+  },
+  "trustSite": {
+    "message": "信任本网站",
+    "description": "trust site button on tracker tab"
+  },
+  "distrustSite": {
+    "message": "不信任本网站",
+    "description": "distrust site button on tracker tab"
+  },
+  "siteListHint": {
+    "message": "您在自动擦除以下网站的浏览历史记录：",
+    "description": "hint text above site list on manage tab"
+  },
+  "siteListRemove": {
+    "message": "删除",
+    "description": "remove button text of site list on manage tab"
+  },
+  "siteListAdd": {
+    "message": "添加",
+    "description": "add button text of site list on manage tab"
+  },
+  "siteListDomainExists": {
+    "message": "网站已存在",
+    "description": "error message that domain already exists on manage tab"
+  },
+  "noSite": {
+    "message": "没有网站",
+    "description": "empty message on manage tab"
   }
 }
