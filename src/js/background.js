@@ -1,118 +1,191 @@
-import baIconOn from '../../public/ba-on.png';
-import baIconOff from '../../public/ba-off.png';
-import {StorageAPI} from "./StorageAPI";
+import {AbpRulesManager} from "./abp-rules-manager";
+import {ConfigManager} from "./config-manager";
+import {TabProfileManager} from "./tab-profile-manager";
+import {getDomain, prettyPrint} from "./utils";
+import {CookieHistoryManager} from "./cookie-history-manager";
+import {autorun} from "mobx";
+import debounce from 'lodash/debounce';
 
-function getDomain(url) {
-    try {
-        return new URL(url).hostname;
-    } catch {
-        return '';
+import baIconDisable from '../assets/images/circle-disabled.png';
+import baIconEnabled from '../assets/images/circle-enabled.png';
+
+const moduleName = '👑 Main';
+
+ConfigManager.initiate().then();
+AbpRulesManager.initiate().then();
+TabProfileManager.initiate();
+
+// block request
+chrome.webRequest.onBeforeRequest.addListener(
+    details => {
+        if (details.tabId === chrome.tabs.TAB_ID_NONE) {
+            // allow all requests that are not coming from a tab
+            return {};
+        }
+        // do not use current tab id from tab profile manager,
+        // because a web request may come from an inactive tab
+        const domain = getDomain(TabProfileManager.getUrl(details.tabId));
+        const trackerMasterEnabled = ConfigManager.getTrackerMasterSwitch();
+        const domainWhitelisted = ConfigManager.checkTrackerWhitelist(domain);
+        const userAllowed = ConfigManager.checkTrackerAllowedList(domain, details.url);
+        const {result: blockedByRules, matchedRuleName} = AbpRulesManager.checkShouldBlock(domain, details.url);
+
+        // even if user allows whole site or single tracker,
+        // tracker info should still be added to tab profile
+        // to be displayed on popup
+        const shouldAddToTabProfile = trackerMasterEnabled && blockedByRules;
+        // now take all conditions into consideration
+        const shouldBlock = trackerMasterEnabled && !domainWhitelisted && !userAllowed && blockedByRules;
+
+        if (shouldAddToTabProfile) {
+            // tracker whitelist is another logic,
+            // internally, it is separate from user allowed logic,
+            // one controls by site and one controls by tracker,
+            // externally, site has higher priority than tracker and can short the latter
+            TabProfileManager.addAbpBlockedRequest(details.tabId, matchedRuleName, details.url, userAllowed);
+            // only log requests that are matched by ABP rules
+            prettyPrint(shouldBlock ? 2 : 0, moduleName, 'Handled web request', {
+                details, domain, domainWhitelisted, userAllowed, matchedRuleName, shouldBlock
+            });
+        }
+        return {cancel: shouldBlock};
+    },
+    {urls: ['*://*/*']},
+    ['blocking']
+);
+
+// bind onActivated event to update browserAction
+autorun(() => {
+    const domain = getDomain(TabProfileManager.getUrl(TabProfileManager.currentTabId));
+    const cookieBlacklisted = ConfigManager.checkCookieBlacklist(domain);
+    const trackerMasterSwitch = ConfigManager.getTrackerMasterSwitch();
+    const trackerWhitelisted = ConfigManager.checkTrackerWhitelist(domain);
+    const baIconState = cookieBlacklisted || trackerMasterSwitch;
+    let badgeText = '';
+    if (trackerMasterSwitch) {
+        // function that refers observable variables still works as observable
+        badgeText = TabProfileManager.getUserAllowedTrackerCount(TabProfileManager.currentTabId, trackerWhitelisted).toString();
     }
-}
-
-async function getActiveTab() {
-    return await new Promise(resolve => {
-        chrome.tabs.query({currentWindow: true, active: true}, tabs => {
-            resolve(tabs[0]);
+    Promise.all([
+        new Promise(resolve => {
+            chrome.browserAction.setIcon({
+                path: baIconState ? baIconEnabled : baIconDisable
+            }, resolve);
+        }),
+        new Promise(resolve => {
+            chrome.browserAction.setBadgeText({
+                text: badgeText
+            }, resolve);
+        }),
+        new Promise(resolve => {
+            chrome.browserAction.setBadgeBackgroundColor({
+                color: '#ffbd2e'
+            }, resolve)
+        })
+    ]).then(() => {
+        prettyPrint(0, moduleName, '(autorun) Updated browser action', {
+            domain, cookieBlacklisted, trackerMasterSwitch, trackerWhitelisted, baIconState, badgeText
         });
     });
-}
-
-async function reloadIcon() {
-    let tab = await getActiveTab();
-    let domain = tab ? getDomain(tab.url) : '';
-    let status = (await StorageAPI.getCookieBlacklist()).has(domain);
-    await new Promise(resolve => {
-        chrome.browserAction.setIcon({path: status ? baIconOn : baIconOff}, resolve);
-    });
-}
-
-async function clearBlacklistCookies(data) {
-    function getCookieUrl(cookie) {
-        return "http" + (cookie.secure ? "s" : "") + "://" + cookie.domain + cookie.path;
-    }
-
-    const urls = data.map(url => url.split(/[#?]/)[0]);
-    const uniqueUrls = [...new Set(urls).values()].filter(Boolean);
-    let results = await Promise.all(uniqueUrls.map(url => new Promise(resolve => {
-        chrome.cookies.getAll({url}, resolve);
-    })));
-    // convert the array of arrays into a deduplicated flat array of cookies
-    const cookies = [
-        ...new Map(
-            [].concat(...results)
-                .map(c => [JSON.stringify(c), c])
-        ).values()
-    ];
-    // filter out google service cookies
-    const blacklistCookies = cookies.filter(cookie => !(/\.google\.(?:co)?(?:com|hk|jp|in|uk)/g).test(cookie.domain));
-    await Promise.all(blacklistCookies.map(cookie => new Promise(resolve => {
-        chrome.cookies.remove({
-            url: getCookieUrl(cookie),
-            name: cookie.name
-        }, function (deletedCookie) {
-            console.log("background: Cookie " + getCookieUrl(deletedCookie) + " has been deleted by blacklist.");
-            resolve();
-        });
-    })));
-}
-
-async function clearBlacklistHistory(url) {
-    await new Promise(resolve => {
-        chrome.history.deleteUrl({url}, resolve);
-    });
-}
-
-// reload browserAction icon when tabs switch
-chrome.tabs.onActivated.addListener(async () => {
-    await reloadIcon();
 });
 
-// reload browserAction icon when tabs update
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
-    if (changeInfo.status === 'complete') {
-        await reloadIcon();
-    }
-})
+// page refresh
+// use debounce to avoid multiple calls in short time
+const refreshPage = debounce(() => {
+    chrome.tabs.reload(
+        TabProfileManager.currentTabId,
+        {bypassCache: false},
+        () => {
+            prettyPrint(0, moduleName, '(🌊 Debounce) Current page refreshed', {
+                tabId: TabProfileManager.currentTabId
+            });
+        }
+    );
+}, 2000);
 
 // handle messages
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // wrap it up so that the outer function is a synchronous function
     (async (message, sender, sendResponse) => {
-        if (message.reqType.startsWith("tab")) {
-            if (message.reqType === "tabClose") {
-                if ((await StorageAPI.getCookieBlacklist()).has(message.domain)) {
-                    await clearBlacklistCookies(message.data);
-                    await clearBlacklistHistory(message.url);
-                }
-                sendResponse();
+        let response = {};
+        if (message.src === 'content script' && message.action === 'clear cookie and history') {
+            // check if domain is in cookie blacklist
+            if (ConfigManager.checkCookieBlacklist(message.domain)) {
+                // blacklisted, clear cookie and history
+                CookieHistoryManager.clearBlacklistCookies(message.data).then();   // performance data
+                CookieHistoryManager.clearBlacklistHistory(message.domain).then();
             }
-        } else if (message.reqType.startsWith("popup")) {
-            let tab = await getActiveTab();
-            let url = tab ? tab.url : '';
-            let domain = url ? getDomain(url) : '';
-            if (message.reqType === "popupQuery") {
-                sendResponse(domain ? {
-                    enabled: (await StorageAPI.getCookieBlacklist()).has(domain),
-                    domain: domain,
-                    faviconUrl: "chrome://favicon/size/24@1x/" + url,
-                    locked: false
-                } : {
-                    enabled: false,
-                    domain: "",
-                    faviconUrl: "chrome://favicon/size/24@1x/",
-                    locked: true
+            // content script does not wait for response
+        } else if (message.src === 'popup' && message.action === 'query config') {
+            const domain = getDomain(TabProfileManager.getUrl(TabProfileManager.currentTabId));
+            const appState = {
+                homeTabState: {
+                    domain,
+                    trackerSwitchState: ConfigManager.getTrackerMasterSwitch()
+                },
+                trackerTabState: {
+                    listItems: [],  // fill later
+                    siteTrusted: ConfigManager.checkTrackerWhitelist(domain)
+                },
+                manageTabState: {
+                    listItems: ConfigManager.getCookieBlacklist()
+                }
+            };
+            // fill trackerTabState.listItems
+            const abpBlockedRequests = TabProfileManager.getAbpBlockedRequests(TabProfileManager.currentTabId);
+            for (let ruleName in abpBlockedRequests) {
+                appState.trackerTabState.listItems.push({
+                    isHeader: true,
+                    content: ruleName,
+                    userAllowed: false
                 });
-            } else if (message.reqType === "popupEnable") {
-                await StorageAPI.addCookieBlacklist(domain);
-                await reloadIcon();
-                sendResponse();
-            } else if (message.reqType === "popupDisable") {
-                await StorageAPI.deleteCookieBlacklist(domain);
-                await reloadIcon();
-                sendResponse();
+                abpBlockedRequests[ruleName].forEach(request => {
+                    appState.trackerTabState.listItems.push({
+                        isHeader: false,
+                        content: request.url,
+                        userAllowed: request.userAllowed
+                    });
+                });
+            }
+            // send response
+            response = {appState};
+        } else if (message.src === 'popup' && message.action === 'add cookie blacklist') {
+            response = {
+                result: ConfigManager.addCookieBlacklist(message.data.domain)
+            };
+        } else if (message.src === 'popup' && message.action === 'del cookie blacklist') {
+            response = {
+                result: ConfigManager.removeCookieBlacklist(message.data.domain)
+            };
+        } else if (message.src === 'popup' && message.action === 'set tracker master') {
+            response = {
+                result: ConfigManager.setTrackerMasterSwitch(message.data.value)
+            };
+        } else if (message.src === 'popup' && message.action === 'add tracker whitelist') {
+            response = {
+                result: ConfigManager.addTrackerWhitelist(message.data.domain)
+            };
+        } else if (message.src === 'popup' && message.action === 'del tracker whitelist') {
+            response = {
+                result: ConfigManager.removeTrackerWhitelist(message.data.domain)
+            };
+        } else if (message.src === 'popup' && message.action === 'add tracker allowed') {
+            response = {
+                result: ConfigManager.addTrackerAllowedList(message.data.domain, message.data.url)
+            };
+        } else if (message.src === 'popup' && message.action === 'del tracker allowed') {
+            response = {
+                result: ConfigManager.removeTrackerAllowedList(message.data.domain, message.data.url)
             }
         }
+        if (message.src === 'popup' && message.action.includes('tracker')) {
+            // tracker related features, need to refresh page automatically
+            refreshPage();
+        }
+        sendResponse(response);
+        prettyPrint(0, moduleName, 'Handled message', {
+            message, response
+        });
     })(message, sender, sendResponse);
     // return true to keep tunnel open until sendResponse() is called
     return true;

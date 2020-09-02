@@ -114,7 +114,7 @@ body {
     margin-bottom: 20px;
   }
 
-  &-trackers .ant-switch {
+  &-tracker .ant-switch {
     margin-top: 12px;
     margin-bottom: 15px;
   }
@@ -157,28 +157,55 @@ body {
   border-radius: 5px;
 
   &-content {
-    padding: 15px 10px;
     font-size: 10px;
     font-weight: normal;
     line-height: 12px;
-    max-width: 200px;
+  }
+}
+
+#popover-group-1 .ant-popover-inner-content {
+  padding: 15px 10px;
+  max-width: 200px;
+}
+
+#popover-group-2 {
+  .ant-popover {
+    left: 30px !important;
+  }
+
+  .ant-popover-inner-content {
+    padding: 10px;
+    width: 320px;
+    word-break: break-all;
+    height: 80px;
+  }
+
+  .ScrollbarsCustom-TrackY {
+    top: 0 !important;
+    height: 100% !important;
+    width: 5px !important;
   }
 }
 
 .domain-display {
-  width: fit-content;
-  height: 34px;
   margin: -3px auto 0;
   padding-top: 5px;
-  display: flex;
+  height: 34px;
+  max-width: 300px;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   img {
+    display: inline;
+    vertical-align: middle;
     width: 20px;
     height: 20px;
   }
 
   span {
+    display: inline;
+    vertical-align: middle;
     font-size: 14px;
     font-weight: normal;
     margin-left: 10px;
@@ -231,7 +258,7 @@ body {
   }
 }
 
-.trackers-tab {
+.tracker-tab {
   margin-top: 17px;
 
   .ant-empty {
@@ -252,17 +279,23 @@ body {
   }
 }
 
-.trackers-list {
+.tracker-list {
   height: 226px;
 
-  .ant-list-item span {
+  .single-tracker-content {
     font-size: 14px;
     overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 260px;
   }
 
-  .trackers-list-header {
+  .tracker-list-header {
     font-size: 14px;
     font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .single-tracker-action {
@@ -315,21 +348,26 @@ body {
 }
 
 .single-site {
-  width: fit-content;
+  width: 260px;
   height: auto;
-  display: flex;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   img {
     width: 20px;
     height: 20px;
     margin-right: 7px;
+    display: inline;
+    vertical-align: middle;
   }
 
   span {
     font-size: 14px;
     line-height: 20px;
     font-weight: normal;
-    color: #000000;
+    display: inline;
+    vertical-align: middle;
   }
 }
 

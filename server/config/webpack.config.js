@@ -12,7 +12,6 @@ const isDev = argv.mode !== 'production';
 
 module.exports = {
     entry: {
-        youtube: [resolve(PROJECT_ROOT, 'src/js/youtube.js')],
         content: [resolve(PROJECT_ROOT, 'src/js/content.js')],
         background: [resolve(PROJECT_ROOT, 'src/js/background.js')],
         popup: [resolve(PROJECT_ROOT, 'src/js/popup.jsx')]
@@ -20,7 +19,7 @@ module.exports = {
     output: {
         publicPath: '/',
         path: resolve(PROJECT_ROOT, 'build'),
-        filename: '[name].bundle.js'
+        filename: '[name].js'
     },
     module: {
         rules: [
@@ -104,15 +103,22 @@ module.exports = {
                     to: resolve(PROJECT_ROOT, 'build'),
                     transform(data) {
                         let content = JSON.parse(data);
+                        // some content security policy for development purpose
                         if (isDev) {
+                            // remove existed fields
+                            content['content_security_policy'] = content['content_security_policy']
+                                .replace(/script-src(.*?);/, '').replace(/object-src(.*?);/, '');
                             content['content_security_policy'] =
                                 (content['content_security_policy'] || '') +
                                 'script-src \'self\' \'unsafe-eval\';object-src \'self\';';
                         }
+                        // name field conversion
+                        // sample-name to Sample Name
                         content.name = process.env.npm_package_name
                             .split('-')
                             .map(s => s.charAt(0).toUpperCase() + s.slice(1))
                             .join(' ');
+                        // copy description, version, and minimum chrome version fields
                         content.description = process.env.npm_package_description;
                         content.version = process.env.npm_package_version;
                         content.minimum_chrome_version = MINIMUM_CHROME_VERSION;
@@ -142,7 +148,7 @@ module.exports = {
             ]
         }),
         new HtmlWebpackPlugin({
-            template: resolve(PROJECT_ROOT, 'src/html/template.ejs'),
+            template: resolve(PROJECT_ROOT, 'src/html/popup.ejs'),
             filename: 'popup.html',
             chunks: ['popup'],
             minify: {

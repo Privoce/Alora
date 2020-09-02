@@ -18,12 +18,12 @@
      */
     function existingButtons(classNames) {
         return classNames
-                .map(name => {
+            .map(name => {
                 return Array.from(document.getElementsByClassName(name)) || [];
-    })
-    .reduce(function(acc, elems) {
-            return acc.concat(elems);
-        }, [])
+            })
+            .reduce(function (acc, elems) {
+                return acc.concat(elems);
+            }, [])
     }
 
     /**
@@ -53,7 +53,7 @@
 
         // Find the actual parent with the display style 'none' so that we can
         // listen to that element's changes.
-        var parentWithDisplayStyle = (function() {
+        var parentWithDisplayStyle = (function () {
             var currentParent = button;
             while (currentParent !== null) {
                 if (currentParent.style.display === 'none') {
@@ -81,7 +81,7 @@
         // If this is the first skip button we have encountered, we will have to
         // set up the observer first.
         if (!skipBtnObserver) {
-            skipBtnObserver = new MutationObserver(function() {
+            skipBtnObserver = new MutationObserver(function () {
                 if (!isBtnVisible(observedSkipBtn)) {
                     return;
                 }
@@ -99,7 +99,7 @@
         // Note that we are actually observing the button's parent that has the
         // display attribute, as the skip button's visibilty is controlled by its
         // parent.
-        skipBtnObserver.observe(parentWithDisplayStyle, { attributes: true });
+        skipBtnObserver.observe(parentWithDisplayStyle, {attributes: true});
     }
 
     /**
@@ -112,13 +112,13 @@
             // is visible on the screen, so that it is like an actual user is pressing
             // it. This also gives a user time to not-skip the ad in the future.
             if (!isBtnVisible(button)) {
-            triggerClickWhenVisible(button);
+                triggerClickWhenVisible(button);
 
-            return;
-        }
+                return;
+            }
 
-        triggerClick(button);
-    })
+            triggerClick(button);
+        })
     }
 
     /**
@@ -153,7 +153,7 @@
             return false;
         }
 
-        var ytdPlayer = (function(nodeList) {
+        var ytdPlayer = (function (nodeList) {
             return nodeList && nodeList[0];
         })(document.getElementsByTagName('ytd-player'));
 
@@ -161,11 +161,11 @@
             return false;
         }
 
-        var observer = new MutationObserver(function() {
+        var observer = new MutationObserver(function () {
             checkAndClickButtons();
         });
 
-        observer.observe(ytdPlayer, { childList: true, subtree: true });
+        observer.observe(ytdPlayer, {childList: true, subtree: true});
 
         clearTimeout(timeoutId); // Just for good measure
 
@@ -195,7 +195,7 @@
          * Starts the poll to see if any of the ad buttons are present in the page now.
          * The interval of 2 seconds is arbitrary. I believe it is a good compromise.
          */
-        timeoutId = setTimeout(function() {
+        timeoutId = setTimeout(function () {
             checkAndClickButtons();
 
             initTimeout();
@@ -207,7 +207,7 @@
      * window is the same as the top parent window. The try..catch is there because
      * some browsers will not let a script in an iframe access the parent window.
      */
-    var inIframe = (function() {
+    var inIframe = (function () {
         try {
             return window.self !== window.top;
         } catch (e) {

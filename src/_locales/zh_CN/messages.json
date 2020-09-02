@@ -1,18 +1,18 @@
 {
-    "name":{
-      "message":"Alora",
-      "description":"name"
-    },
-    "description": {
-      "message": "Alora 帮助你保护个人信息不被泄露，并自动清理缓存与历史记录. ",
-      "description": "Extension description in manifest."
-    },
-    "popup_block":{
-      "message": "在此网站无痕浏览：",
-      "description": "popup block text"
-    },
-    "popup_explanation":{
-      "message":"Alora帮助你保护个人信息并减少广告",
-      "description": "popup explanation text"
-    }
+  "name": {
+    "message": "Alora",
+    "description": "name"
+  },
+  "description": {
+    "message": "Alora 帮助你保护个人信息不被泄露，并自动清理缓存与历史记录. ",
+    "description": "Extension description in manifest."
+  },
+  "popup_block": {
+    "message": "在此网站无痕浏览：",
+    "description": "popup block text"
+  },
+  "popup_explanation": {
+    "message": "Alora帮助你保护个人信息并减少广告",
+    "description": "popup explanation text"
   }
+}

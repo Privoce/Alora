@@ -1,18 +1,18 @@
 {
-    "name":{
-      "message":"Alora",
-      "description":"name"
-    },
-    "description": {
-      "message": "Alora te ajuda a proteger suas pegadas digitais dos rastreadores. Alora também te auxilia a limpar automaticamente o cache e os cookies.",
-      "description": "Extension description in manifest."
-    },
-    "popup_block":{
-      "message": "Nunca rastreie o meu histórico de navegação em",
-      "description": "popup block text"
-    },
-    "popup_explanation":{
-      "message":"O Alora vai te ajudar a reduzir a quantidade de anúncios e a limpar o cache e os cookies relacionados a este site.",
-      "description": "popup explanation text"
-    }
+  "name": {
+    "message": "Alora",
+    "description": "name"
+  },
+  "description": {
+    "message": "Alora te ajuda a proteger suas pegadas digitais dos rastreadores. Alora também te auxilia a limpar automaticamente o cache e os cookies.",
+    "description": "Extension description in manifest."
+  },
+  "popup_block": {
+    "message": "Nunca rastreie o meu histórico de navegação em",
+    "description": "popup block text"
+  },
+  "popup_explanation": {
+    "message": "O Alora vai te ajudar a reduzir a quantidade de anúncios e a limpar o cache e os cookies relacionados a este site.",
+    "description": "popup explanation text"
   }
+}

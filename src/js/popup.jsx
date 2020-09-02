@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom'
-import {Switch, Menu, Badge, Popover, List, Input, Empty, Button} from 'antd';
+import {Badge, Button, Empty, Input, List, Menu, Popover, Switch} from 'antd';
 import Scrollbar from 'react-scrollbars-custom';
-import {observable, autorun} from 'mobx';
+import {observable, toJS} from 'mobx';
 import {observer} from 'mobx-react';
+
+import {getFaviconUrl, getFriendlyUrl, preventDrag, prettyPrint} from "./utils";
 
 import '../css/popup.less';
 
@@ -15,15 +17,7 @@ import allowIconDisabled from '../assets/images/allow-disabled.png';
 import banIconEnabled from '../assets/images/ban-enabled.png';
 import banIconDisabled from '../assets/images/ban-disabled.png';
 
-const preventDrag = e => {
-    e.preventDefault();
-};
-
-const stripOverflow = (txt, max = 24) =>
-    txt.length <= max ? txt : txt.slice(0, max) + '...';
-
-const getFaviconUrl = (domain) =>
-    'chrome://favicon/size/20@1x/http://' + domain;
+const moduleName = '💻 Popup';
 
 @observer
 class Header extends React.Component {
@@ -42,25 +36,26 @@ class Header extends React.Component {
 
 @observer
 class MenuBar extends React.Component {
-    get allowedTrackersCount() {
-        return appState.trackersTabState.listItems.filter(i => !i.isHeader && i.trusted).length;
+    get badgeNumber() {
+        return appState.get().trackerTabState.listItems.filter(item =>
+            !item.isHeader && (item.userAllowed || appState.get().trackerTabState.siteTrusted)).length;
     }
 
     render() {
         return (
             <Menu
                 mode='horizontal'
-                selectedKeys={[appState.activeTabKey]}
+                selectedKeys={[internalState.activeTabKey]}
                 onSelect={e => {
-                    appState.activeTabKey = e.key.toString();
+                    internalState.activeTabKey = e.key.toString();
                 }}
             >
                 <Menu.Item key='home'>Home</Menu.Item>
-                <Menu.Item key='trackers' disabled={!appState.homeTabState.trackersSwitchState}>
+                <Menu.Item key='tracker' disabled={!appState.get().homeTabState.trackerSwitchState}>
                     <Badge
-                        count={this.allowedTrackersCount}
+                        count={this.badgeNumber}
                         showZero={true}
-                        style={{display: appState.homeTabState.trackersSwitchState ? 'block' : 'none'}}
+                        style={{display: appState.get().homeTabState.trackerSwitchState ? 'block' : 'none'}}
                     >Trackers</Badge>
                 </Menu.Item>
                 <Menu.Item key='manage'>Manage</Menu.Item>
@@ -74,7 +69,12 @@ class TagLine extends React.Component {
     render() {
         return (
             <div className='tagline'>
-                <Popover placement='bottomLeft' content={<div>{this.props.hint}</div>} trigger='hover'>
+                <Popover
+                    placement='bottomLeft'
+                    content={<div>{this.props.hint}</div>}
+                    trigger='hover'
+                    getPopupContainer={() => document.getElementById('popover-group-1')}
+                >
                     <div className='tagline-icon'>
                         <span>i</span>
                     </div>
@@ -92,8 +92,8 @@ class DomainDisplay extends React.Component {
     render() {
         return (
             <div className='domain-display'>
-                <img src={getFaviconUrl(appState.homeTabState.domain)} onDragStart={preventDrag} alt=''/>
-                <span>{stripOverflow(appState.homeTabState.domain)}</span>
+                <img src={getFaviconUrl(appState.get().homeTabState.domain)} onDragStart={preventDrag} alt=''/>
+                <span>{appState.get().homeTabState.domain}</span>
             </div>
         );
     }
@@ -110,24 +110,48 @@ class ToggleSwitch extends React.Component {
 
 @observer
 class HomeTab extends React.Component {
-    getCookieSwitchState = () => appState.homeTabState.cookieSwitchState;
+    getCookieSwitchState = () => appState.get().manageTabState.listItems.includes(appState.get().homeTabState.domain);
 
-    getTrackersSwitchState = () => appState.homeTabState.trackersSwitchState;
+    getTrackerSwitchState = () => appState.get().homeTabState.trackerSwitchState;
 
     toggleCookieSwitchState = () => {
-        appState.homeTabState.cookieSwitchState =
-            !appState.homeTabState.cookieSwitchState;
+        const newState = !this.getCookieSwitchState();
+        chrome.runtime.sendMessage({
+            src: 'popup',
+            action: `${newState ? 'add' : 'del'} cookie blacklist`,
+            data: {
+                domain: appState.get().homeTabState.domain
+            }
+        }, response => {
+            if (response.result) {
+                if (newState) {
+                    appState.get().manageTabState.listItems.push(appState.get().homeTabState.domain);
+                } else {
+                    appState.get().manageTabState.listItems.remove(appState.get().homeTabState.domain);
+                }
+            }
+        });
     };
 
-    toggleTrackersSwitchState = () => {
-        appState.homeTabState.trackersSwitchState =
-            !appState.homeTabState.trackersSwitchState;
+    toggleTrackerSwitchState = () => {
+        const newState = !appState.get().homeTabState.trackerSwitchState;
+        chrome.runtime.sendMessage({
+            src: 'popup',
+            action: 'set tracker master',
+            data: {
+                value: newState
+            }
+        }, response => {
+            if (response.result) {
+                appState.get().homeTabState.trackerSwitchState = newState;
+            }
+        });
     };
 
     render() {
         return (
             <div className='home-tab' style={{
-                display: appState.activeTabKey === 'home' ? 'block' : 'none'
+                display: internalState.activeTabKey === 'home' ? 'block' : 'none'
             }}>
                 <div className='home-tab-box home-tab-box-cookie'>
                     <TagLine content='Never store my browsing history on'
@@ -138,12 +162,12 @@ class HomeTab extends React.Component {
                         onChange={this.toggleCookieSwitchState}
                     />
                 </div>
-                <div className='home-tab-box home-tab-box-trackers'>
-                    <TagLine content='Blocking trackers on all sites'
+                <div className='home-tab-box home-tab-box-tracker'>
+                    <TagLine content='Blocking tracker on all sites'
                              hint='Alora blocks trackers and other malicious scripts from following you around online to collect information about your browsing habits and interests.'/>
                     <ToggleSwitch
-                        getChecked={this.getTrackersSwitchState}
-                        onChange={this.toggleTrackersSwitchState}
+                        getChecked={this.getTrackerSwitchState}
+                        onChange={this.toggleTrackerSwitchState}
                     />
                 </div>
             </div>
@@ -153,30 +177,63 @@ class HomeTab extends React.Component {
 
 @observer
 class SingleTracker extends React.Component {
+    get siteTrusted() {
+        return appState.get().trackerTabState.siteTrusted;
+    }
+
+    get userAllowed() {
+        return this.props.item.userAllowed;
+    }
+
+    set userAllowed(value) {
+        chrome.runtime.sendMessage({
+            src: 'popup',
+            action: `${value ? 'add' : 'del'} tracker allowed`,
+            data: {
+                domain: appState.get().homeTabState.domain,
+                url: this.props.item.content
+            }
+        }, response => {
+            if (response.result) {
+                this.props.item.userAllowed = value;
+            }
+        });
+    }
+
     render() {
         return (
             <>
-                <span>{stripOverflow(this.props.item.content)}</span>
+                <Popover
+                    trigger='click'
+                    content={(
+                        <Scrollbar>
+                            <span>{this.props.item.content}</span>
+                        </Scrollbar>
+                    )}
+                    getPopupContainer={() => document.getElementById('popover-group-2')}
+                >
+                    <span className='single-tracker-content'>{getFriendlyUrl(this.props.item.content)}</span>
+                </Popover>
                 <div className='single-tracker-action'>
                     <img
                         alt=''
                         onDragStart={preventDrag}
-                        src={!this.props.item.trusted ? banIconEnabled : banIconDisabled}
-                        style={{cursor: this.props.item.trusted ? 'pointer' : 'default'}}
+                        src={!(this.siteTrusted || this.userAllowed) ? banIconEnabled : banIconDisabled}
+                        style={{cursor: !this.siteTrusted && this.userAllowed ? 'pointer' : 'default'}}
                         onClick={() => {
-                            if (this.props.item.trusted) {
-                                this.props.item.trusted = false;
+                            if (!this.siteTrusted && this.userAllowed) {
+                                this.userAllowed = false;
                             }
                         }}
                     />
                     <img
                         alt=''
                         onDragStart={preventDrag}
-                        src={this.props.item.trusted ? allowIconEnabled : allowIconDisabled}
-                        style={{cursor: !this.props.item.trusted ? 'pointer' : 'default'}}
+                        src={this.siteTrusted || this.userAllowed ? allowIconEnabled : allowIconDisabled}
+                        style={{cursor: !this.siteTrusted && !this.userAllowed ? 'pointer' : 'default'}}
                         onClick={() => {
-                            if (!this.props.item.trusted) {
-                                this.props.item.trusted = true;
+                            if (!this.siteTrusted && !this.userAllowed) {
+                                this.userAllowed = true;
                             }
                         }}
                     />
@@ -187,20 +244,20 @@ class SingleTracker extends React.Component {
 }
 
 @observer
-class TrackersList extends React.Component {
+class TrackerList extends React.Component {
     render() {
         return (
             <List>
-                {appState.trackersTabState.listItems.map(item => {
+                {appState.get().trackerTabState.listItems.map(item => {
                     if (item.isHeader) {
                         return (
                             <List.Item key={item.content}>
-                                <span className='trackers-list-header'>{stripOverflow(item.content)}</span>
+                                <span className='tracker-list-header'>{item.content}</span>
                             </List.Item>
                         );
                     } else {
                         return (
-                            <List.Item>
+                            <List.Item key={item.content}>
                                 <SingleTracker item={item}/>
                             </List.Item>
                         );
@@ -212,55 +269,50 @@ class TrackersList extends React.Component {
 }
 
 @observer
-class TrackersTab extends React.Component {
+class TrackerTab extends React.Component {
     get isEmpty() {
-        return appState.trackersTabState.listItems.length <= 0;
-    }
-
-    get allTrusted() {
-        return appState.trackersTabState.listItems.every(i => i.isHeader || i.trusted);
+        return appState.get().trackerTabState.listItems.length <= 0;
     }
 
     handleClick = () => {
-        if (this.allTrusted) {
-            appState.trackersTabState.listItems.forEach(i => {
-                if (!i.isHeader) {
-                    i.trusted = false;
-                }
-            });
-        } else {
-            appState.trackersTabState.listItems.forEach(i => {
-                if (!i.isHeader) {
-                    i.trusted = true;
-                }
-            });
-        }
+        const newState = !appState.get().trackerTabState.siteTrusted;
+        chrome.runtime.sendMessage({
+            src: 'popup',
+            action: `${newState ? 'add' : 'del'} tracker whitelist`,
+            data: {
+                domain: appState.get().homeTabState.domain
+            }
+        }, response => {
+            if (response.result) {
+                appState.get().trackerTabState.siteTrusted = newState;
+            }
+        });
     };
 
     render() {
         return (
-            <div className='trackers-tab' style={{
-                display: appState.activeTabKey === 'trackers' ? 'block' : 'none'
+            <div className='tracker-tab' style={{
+                display: internalState.activeTabKey === 'tracker' ? 'block' : 'none'
             }}>
                 <Empty
                     style={{display: this.isEmpty ? 'block' : 'none'}}
                     image={<img src={emptyImage} onDragStart={preventDrag} alt=''/>}
-                    description={<span>There are no trackers on this site!</span>}
+                    description={<span>There are no tracker on this site!</span>}
                 />
                 <div
-                    className='trackers-list'
+                    className='tracker-list'
                     style={{display: !this.isEmpty ? 'block' : 'none'}}
                 >
                     <Scrollbar>
-                        <TrackersList/>
+                        <TrackerList/>
                     </Scrollbar>
                     <Button
                         className={
-                            this.allTrusted ? 'trust-site-btn-trusted' : ''
+                            appState.get().trackerTabState.siteTrusted ? 'trust-site-btn-trusted' : ''
                         }
                         onClick={this.handleClick}
                     >
-                        {!this.allTrusted ? 'Trust Site' : 'Distrust Site'}
+                        {!appState.get().trackerTabState.siteTrusted ? 'Trust Site' : 'Distrust Site'}
                     </Button>
                 </div>
             </div>
@@ -281,17 +333,29 @@ class InfoSitesList extends React.Component {
 
 @observer
 class SingleSite extends React.Component {
+    handleClick = () => {
+        chrome.runtime.sendMessage({
+            src: 'popup',
+            action: 'del cookie blacklist',
+            data: {
+                domain: this.props.domain
+            }
+        }, response => {
+            if (response.result) {
+                appState.get().manageTabState.listItems.remove(this.props.domain);
+            }
+        });
+    };
+
     render() {
         return (
             <>
                 <div className='single-site'>
-                    <img src={getFaviconUrl(this.props.item)} onDragStart={preventDrag} alt=''/>
-                    <span>{stripOverflow(this.props.item)}</span>
+                    <img src={getFaviconUrl(this.props.domain)} onDragStart={preventDrag} alt=''/>
+                    <span>{this.props.domain}</span>
                 </div>
                 <div className='single-site-action'>
-                    <a onClick={() => {
-                        appState.manageTabState.listItems.remove(this.props.item);
-                    }}>Remove</a>
+                    <a onClick={this.handleClick}>Remove</a>
                 </div>
             </>
         );
@@ -303,10 +367,10 @@ class SitesList extends React.Component {
     render() {
         return (
             <List>
-                {appState.manageTabState.listItems.map(item => {
+                {appState.get().manageTabState.listItems.map(domain => {
                     return (
-                        <List.Item key={item}>
-                            <SingleSite item={item}/>
+                        <List.Item key={domain}>
+                            <SingleSite domain={domain}/>
                         </List.Item>
                     );
                 })}
@@ -318,20 +382,26 @@ class SitesList extends React.Component {
 @observer
 class AddSiteInput extends React.Component {
     handleChange = e => {
-        appState.manageTabState.inputText = e.target.value;
+        internalState.inputText = e.target.value;
     };
 
     handleClick = () => {
-        appState.manageTabState.listItems = ['1','2','3'];
-        // if (appState.manageTabState.inputText) {
-        //     if (!appState.manageTabState.listItems.includes(appState.manageTabState.inputText)) {
-        //         appState.manageTabState.listItems.push(appState.manageTabState.inputText);
-        //         appState.manageTabState.inputText = '';
-        //     } else {
-        //         appState.manageTabState.inputText = '';
-        //         appState.manageTabState.inputPlaceholder = 'Domain already exists';
-        //     }
-        // }
+        if (internalState.inputText) {
+            chrome.runtime.sendMessage({
+                src: 'popup',
+                action: 'add cookie blacklist',
+                data: {
+                    domain: internalState.inputText
+                }
+            }, response => {
+                if (response.result) {
+                    appState.get().manageTabState.listItems.push(internalState.inputText);
+                } else {
+                    internalState.inputPlaceholder = 'Domain already exists';
+                }
+                internalState.inputText = '';
+            });
+        }
     }
 
     render() {
@@ -339,7 +409,7 @@ class AddSiteInput extends React.Component {
             <div className='add-site-input'>
                 <Input
                     suffix={<img src={inputIcon} alt=''/>}
-                    value={appState.manageTabState.inputText}
+                    value={internalState.inputText}
                     onChange={this.handleChange}
                 />
                 <span onClick={this.handleClick}>Add</span>
@@ -351,13 +421,13 @@ class AddSiteInput extends React.Component {
 @observer
 class ManageTab extends React.Component {
     get isEmpty() {
-        return appState.manageTabState.listItems.length <= 0;
+        return appState.get().manageTabState.listItems.length <= 0;
     }
 
     render() {
         return (
             <div className='manage-tab' style={{
-                display: appState.activeTabKey === 'manage' ? 'block' : 'none'
+                display: internalState.activeTabKey === 'manage' ? 'block' : 'none'
             }}>
                 <InfoSitesList/>
                 <Empty
@@ -387,74 +457,50 @@ class App extends React.Component {
                 <Header/>
                 <MenuBar/>
                 <HomeTab/>
-                <TrackersTab/>
+                <TrackerTab/>
                 <ManageTab/>
             </>
         );
     }
 }
 
-const appState = observable({
+const internalState = observable({
     activeTabKey: 'home',
+    inputText: '',
+    inputPlaceholder: ''
+});
+const appState = observable.box({
     homeTabState: {
-        domain: 'www.google.com',
-        cookieSwitchState: false,
-        trackersSwitchState: true
+        domain: '',
+        // cookie switch state can be derived from home tab domain and manage tab list items
+        trackerSwitchState: false
     },
-    trackersTabState: {
-        listItems: [
-            {
-                isHeader: true,
-                content: 'Group 1',
-                trusted: false
-            },
-            {
-                isHeader: false,
-                content: 'FB Tracker',
-                trusted: false
-            },
-            {
-                isHeader: false,
-                content: 'GG Tracker',
-                trusted: false
-            },
-            {
-                isHeader: false,
-                content: 'TWT Tracker',
-                trusted: false
-            },
-            {
-                isHeader: false,
-                content: 'AMZ Tracker',
-                trusted: false
-            },
-            {
-                isHeader: true,
-                content: 'Group 2',
-                trusted: false
-            },
-            {
-                isHeader: false,
-                content: 'Advertise',
-                trusted: false
-            }
-        ]
+    trackerTabState: {
+        // badge number can be derived from tracker tab list items
+        listItems: [],
+        siteTrusted: false
     },
     manageTabState: {
-        inputText: '',
-        inputPlaceholder: '',
-        listItems: [
-            'www.baidu.com',
-            'www.google.com',
-            'www.facebook.com',
-            'www.tomzhu.site'
-        ]
+        listItems: []
     }
 });
 
-autorun(() => {
-    console.log('manage tab list is now:');
-    console.log(appState.manageTabState.listItems.toJS());
-});
+// request config from background script
+const queryConfig = async () => {
+    const response = await new Promise(resolve => {
+        chrome.runtime.sendMessage({
+            src: 'popup',
+            action: 'query config'
+        }, resolve);
+    });
+    appState.set(response.appState);
+    prettyPrint(0, moduleName, 'Popup updated', {
+        appState: toJS(appState.get())
+    });
+};
+// immediately call to query initial config
+queryConfig().then();
+// update based on a fixed interval
+setInterval(queryConfig, 2000);
 
 ReactDOM.render(<App/>, document.getElementById('root'));

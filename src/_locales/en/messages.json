@@ -1,18 +1,18 @@
 {
-    "name":{
-      "message":"Alora",
-      "description":"name"
-    },
-    "description": {
-      "message": "Alora helps you to protect your digital footprint from trackers. Alora also helps you to auto clean cache and cookies. ",
-      "description": "Extension description in manifest."
-    },
-    "popup_block":{
-      "message": "Never track my browsing histories on",
-      "description": "popup block text"
-    },
-    "popup_explanation":{
-      "message":"Alora will help you reduce ads and clean cache and cookies related to this site.",
-      "description": "popup explanation text"
-    }
+  "name": {
+    "message": "Alora",
+    "description": "name"
+  },
+  "description": {
+    "message": "Alora helps you to protect your digital footprint from trackers. Alora also helps you to auto clean cache and cookies. ",
+    "description": "Extension description in manifest."
+  },
+  "popup_block": {
+    "message": "Never track my browsing histories on",
+    "description": "popup block text"
+  },
+  "popup_explanation": {
+    "message": "Alora will help you reduce ads and clean cache and cookies related to this site.",
+    "description": "popup explanation text"
   }
+}
