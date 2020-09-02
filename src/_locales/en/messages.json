@@ -1,18 +1,78 @@
 {
-  "name": {
+  "extName": {
     "message": "Alora",
-    "description": "name"
+    "description": "extension name, only for manifest.json"
   },
-  "description": {
-    "message": "Alora helps you to protect your digital footprint from trackers. Alora also helps you to auto clean cache and cookies. ",
-    "description": "Extension description in manifest."
+  "extDescription": {
+    "message": "Protect your online data privacy",
+    "description": "extension description, only for manifest.json"
   },
-  "popup_block": {
-    "message": "Never track my browsing histories on",
-    "description": "popup block text"
+  "title": {
+    "message": "Alora",
+    "description": "popup title"
   },
-  "popup_explanation": {
-    "message": "Alora will help you reduce ads and clean cache and cookies related to this site.",
-    "description": "popup explanation text"
+  "subTitle": {
+    "message": "Protect your online data privacy",
+    "description": "popup sub title"
+  },
+  "homeTab": {
+    "message": "Home",
+    "description": "home tab text"
+  },
+  "trackerTab": {
+    "message": "Trackers",
+    "description": "tracker tab text"
+  },
+  "manageTab": {
+    "message": "Manage",
+    "description": "manage tab text"
+  },
+  "cookieSwitchText": {
+    "message": "Never store my browsing history on",
+    "description": "text above cookie switch"
+  },
+  "cookieSwitchHint": {
+    "message": "By erasing your browsing history, Alora will help you reduce ads and clean the cache and cookies related to this site on your computer.",
+    "description": "hint above cookie switch"
+  },
+  "trackerSwitchText": {
+    "message": "Blocking tracker on all sites",
+    "description": "text above tracker switch"
+  },
+  "trackerSwitchHint": {
+    "message": "Alora blocks trackers and other malicious scripts from following you around online to collect information about your browsing habits and interests.",
+    "description": "hint above tracker switch"
+  },
+  "noTracker": {
+    "message": "There are no tracker on this site!",
+    "description": "empty message on tracker tab"
+  },
+  "trustSite": {
+    "message": "Trust Site",
+    "description": "trust site button on tracker tab"
+  },
+  "distrustSite": {
+    "message": "Distrust Site",
+    "description": "distrust site button on tracker tab"
+  },
+  "siteListHint": {
+    "message": "You are currently erasing the browsing history from the following site(s):",
+    "description": "hint text above site list on manage tab"
+  },
+  "siteListRemove": {
+    "message": "Remove",
+    "description": "remove button text of site list on manage tab"
+  },
+  "siteListAdd": {
+    "message": "Add",
+    "description": "add button text of site list on manage tab"
+  },
+  "siteListDomainExists": {
+    "message": "Domain already exists",
+    "description": "error message that domain already exists on manage tab"
+  },
+  "noSite": {
+    "message": "No Site",
+    "description": "empty message on manage tab"
   }
 }

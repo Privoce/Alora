@@ -112,14 +112,6 @@ module.exports = {
                                 (content['content_security_policy'] || '') +
                                 'script-src \'self\' \'unsafe-eval\';object-src \'self\';';
                         }
-                        // name field conversion
-                        // sample-name to Sample Name
-                        content.name = process.env.npm_package_name
-                            .split('-')
-                            .map(s => s.charAt(0).toUpperCase() + s.slice(1))
-                            .join(' ');
-                        // copy description, version, and minimum chrome version fields
-                        content.description = process.env.npm_package_description;
                         content.version = process.env.npm_package_version;
                         content.minimum_chrome_version = MINIMUM_CHROME_VERSION;
                         return Buffer.from(JSON.stringify(content));

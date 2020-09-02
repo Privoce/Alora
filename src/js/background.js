@@ -117,15 +117,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             }
             // content script does not wait for response
         } else if (message.src === 'popup' && message.action === 'query config') {
-            const domain = getDomain(TabProfileManager.getUrl(TabProfileManager.currentTabId));
+            const url = TabProfileManager.getUrl(TabProfileManager.currentTabId);
             const appState = {
                 homeTabState: {
-                    domain,
+                    url,
                     trackerSwitchState: ConfigManager.getTrackerMasterSwitch()
                 },
                 trackerTabState: {
                     listItems: [],  // fill later
-                    siteTrusted: ConfigManager.checkTrackerWhitelist(domain)
+                    siteTrusted: ConfigManager.checkTrackerWhitelist(getDomain(url))
                 },
                 manageTabState: {
                     listItems: ConfigManager.getCookieBlacklist()

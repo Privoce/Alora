@@ -22,7 +22,7 @@ export class ConfigManager {
             );
         });
         this.cache.cookieBlacklist = storage.cookieBlacklist || [];
-        this.cache.trackerMasterSwitch = storage.trackerMasterSwitch || false;
+        this.cache.trackerMasterSwitch = storage.trackerMasterSwitch || true;
         this.cache.trackerWhitelist = storage.trackerWhitelist || [];
         this.cache.trackerAllowedList = storage.trackerAllowedList || {};
         autorun(() => {

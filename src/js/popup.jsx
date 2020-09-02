@@ -5,7 +5,7 @@ import Scrollbar from 'react-scrollbars-custom';
 import {observable, toJS} from 'mobx';
 import {observer} from 'mobx-react';
 
-import {getFaviconUrl, getFriendlyUrl, preventDrag, prettyPrint} from "./utils";
+import {getFaviconUrlByDomain, getFriendlyUrl, preventDrag, prettyPrint, getDomain, getFaviconUrlByUrl} from "./utils";
 
 import '../css/popup.less';
 
@@ -26,8 +26,8 @@ class Header extends React.Component {
             <div className='header'>
                 <img src={headerIcon} onDragStart={preventDrag} alt='' className='headerIcon'/>
                 <div>
-                    <h1 className='headerTitle'>Alora</h1>
-                    <h2 className='headerSubTitle'>Protect your online data privacy</h2>
+                    <h1 className='headerTitle'>{chrome.i18n.getMessage('title')}</h1>
+                    <h2 className='headerSubTitle'>{chrome.i18n.getMessage('subTitle')}</h2>
                 </div>
             </div>
         );
@@ -50,15 +50,15 @@ class MenuBar extends React.Component {
                     internalState.activeTabKey = e.key.toString();
                 }}
             >
-                <Menu.Item key='home'>Home</Menu.Item>
+                <Menu.Item key='home'>{chrome.i18n.getMessage('homeTab')}</Menu.Item>
                 <Menu.Item key='tracker' disabled={!appState.get().homeTabState.trackerSwitchState}>
                     <Badge
                         count={this.badgeNumber}
                         showZero={true}
                         style={{display: appState.get().homeTabState.trackerSwitchState ? 'block' : 'none'}}
-                    >Trackers</Badge>
+                    >{chrome.i18n.getMessage('trackerTab')}</Badge>
                 </Menu.Item>
-                <Menu.Item key='manage'>Manage</Menu.Item>
+                <Menu.Item key='manage'>{chrome.i18n.getMessage('manageTab')}</Menu.Item>
             </Menu>
         );
     }
@@ -92,8 +92,8 @@ class DomainDisplay extends React.Component {
     render() {
         return (
             <div className='domain-display'>
-                <img src={getFaviconUrl(appState.get().homeTabState.domain)} onDragStart={preventDrag} alt=''/>
-                <span>{appState.get().homeTabState.domain}</span>
+                <img src={getFaviconUrlByUrl(appState.get().homeTabState.url)} onDragStart={preventDrag} alt=''/>
+                <span>{getDomain(appState.get().homeTabState.url)}</span>
             </div>
         );
     }
@@ -110,7 +110,7 @@ class ToggleSwitch extends React.Component {
 
 @observer
 class HomeTab extends React.Component {
-    getCookieSwitchState = () => appState.get().manageTabState.listItems.includes(appState.get().homeTabState.domain);
+    getCookieSwitchState = () => appState.get().manageTabState.listItems.includes(getDomain(appState.get().homeTabState.url));
 
     getTrackerSwitchState = () => appState.get().homeTabState.trackerSwitchState;
 
@@ -120,14 +120,14 @@ class HomeTab extends React.Component {
             src: 'popup',
             action: `${newState ? 'add' : 'del'} cookie blacklist`,
             data: {
-                domain: appState.get().homeTabState.domain
+                domain: getDomain(appState.get().homeTabState.url)
             }
         }, response => {
             if (response.result) {
                 if (newState) {
-                    appState.get().manageTabState.listItems.push(appState.get().homeTabState.domain);
+                    appState.get().manageTabState.listItems.push(getDomain(appState.get().homeTabState.url));
                 } else {
-                    appState.get().manageTabState.listItems.remove(appState.get().homeTabState.domain);
+                    appState.get().manageTabState.listItems.remove(getDomain(appState.get().homeTabState.url));
                 }
             }
         });
@@ -154,8 +154,10 @@ class HomeTab extends React.Component {
                 display: internalState.activeTabKey === 'home' ? 'block' : 'none'
             }}>
                 <div className='home-tab-box home-tab-box-cookie'>
-                    <TagLine content='Never store my browsing history on'
-                             hint='By erasing your browsing history, Alora will help you reduce ads and clean the cache and cookies related to this site on your computer.'/>
+                    <TagLine
+                        content={chrome.i18n.getMessage('cookieSwitchText')}
+                        hint={chrome.i18n.getMessage('cookieSwitchHint')}
+                    />
                     <DomainDisplay/>
                     <ToggleSwitch
                         getChecked={this.getCookieSwitchState}
@@ -163,8 +165,10 @@ class HomeTab extends React.Component {
                     />
                 </div>
                 <div className='home-tab-box home-tab-box-tracker'>
-                    <TagLine content='Blocking tracker on all sites'
-                             hint='Alora blocks trackers and other malicious scripts from following you around online to collect information about your browsing habits and interests.'/>
+                    <TagLine
+                        content={chrome.i18n.getMessage('trackerSwitchText')}
+                        hint={chrome.i18n.getMessage('trackerSwitchHint')}
+                    />
                     <ToggleSwitch
                         getChecked={this.getTrackerSwitchState}
                         onChange={this.toggleTrackerSwitchState}
@@ -190,7 +194,7 @@ class SingleTracker extends React.Component {
             src: 'popup',
             action: `${value ? 'add' : 'del'} tracker allowed`,
             data: {
-                domain: appState.get().homeTabState.domain,
+                domain: getDomain(appState.get().homeTabState.url),
                 url: this.props.item.content
             }
         }, response => {
@@ -280,7 +284,7 @@ class TrackerTab extends React.Component {
             src: 'popup',
             action: `${newState ? 'add' : 'del'} tracker whitelist`,
             data: {
-                domain: appState.get().homeTabState.domain
+                domain: getDomain(appState.get().homeTabState.url)
             }
         }, response => {
             if (response.result) {
@@ -297,7 +301,7 @@ class TrackerTab extends React.Component {
                 <Empty
                     style={{display: this.isEmpty ? 'block' : 'none'}}
                     image={<img src={emptyImage} onDragStart={preventDrag} alt=''/>}
-                    description={<span>There are no tracker on this site!</span>}
+                    description={<span>{chrome.i18n.getMessage('noTracker')}</span>}
                 />
                 <div
                     className='tracker-list'
@@ -312,7 +316,11 @@ class TrackerTab extends React.Component {
                         }
                         onClick={this.handleClick}
                     >
-                        {!appState.get().trackerTabState.siteTrusted ? 'Trust Site' : 'Distrust Site'}
+                        {
+                            !appState.get().trackerTabState.siteTrusted ?
+                            chrome.i18n.getMessage('trustSite') :
+                            chrome.i18n.getMessage('distrustSite')
+                        }
                     </Button>
                 </div>
             </div>
@@ -325,7 +333,7 @@ class InfoSitesList extends React.Component {
     render() {
         return (
             <div className='info-sites-list'>
-                <span>You are currently erasing the browsing history from the following site(s):</span>
+                <span>{chrome.i18n.getMessage('siteListHint')}</span>
             </div>
         );
     }
@@ -351,11 +359,11 @@ class SingleSite extends React.Component {
         return (
             <>
                 <div className='single-site'>
-                    <img src={getFaviconUrl(this.props.domain)} onDragStart={preventDrag} alt=''/>
+                    <img src={getFaviconUrlByDomain(this.props.domain)} onDragStart={preventDrag} alt=''/>
                     <span>{this.props.domain}</span>
                 </div>
                 <div className='single-site-action'>
-                    <a onClick={this.handleClick}>Remove</a>
+                    <a onClick={this.handleClick}>{chrome.i18n.getMessage('siteListRemove')}</a>
                 </div>
             </>
         );
@@ -386,6 +394,7 @@ class AddSiteInput extends React.Component {
     };
 
     handleClick = () => {
+        // ignore empty text
         if (internalState.inputText) {
             chrome.runtime.sendMessage({
                 src: 'popup',
@@ -397,7 +406,7 @@ class AddSiteInput extends React.Component {
                 if (response.result) {
                     appState.get().manageTabState.listItems.push(internalState.inputText);
                 } else {
-                    internalState.inputPlaceholder = 'Domain already exists';
+                    internalState.inputPlaceholder = chrome.i18n.getMessage('siteListDomainExists');
                 }
                 internalState.inputText = '';
             });
@@ -410,9 +419,10 @@ class AddSiteInput extends React.Component {
                 <Input
                     suffix={<img src={inputIcon} alt=''/>}
                     value={internalState.inputText}
+                    placeholder={internalState.inputPlaceholder}
                     onChange={this.handleChange}
                 />
-                <span onClick={this.handleClick}>Add</span>
+                <span onClick={this.handleClick}>{chrome.i18n.getMessage('siteListAdd')}</span>
             </div>
         );
     }
@@ -433,7 +443,7 @@ class ManageTab extends React.Component {
                 <Empty
                     style={{display: this.isEmpty ? 'block' : 'none'}}
                     image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    description='No Data'
+                    description={chrome.i18n.getMessage('noSite')}
                 />
                 <div
                     className='sites-list'
@@ -471,7 +481,7 @@ const internalState = observable({
 });
 const appState = observable.box({
     homeTabState: {
-        domain: '',
+        url: '',
         // cookie switch state can be derived from home tab domain and manage tab list items
         trackerSwitchState: false
     },
@@ -504,3 +514,5 @@ queryConfig().then();
 setInterval(queryConfig, 2000);
 
 ReactDOM.render(<App/>, document.getElementById('root'));
+// TODO: fix home tab favicon missing issue, pass url instead of domain
+// TODO: fix manage tab favicon missing issue, pass url instead of domain
