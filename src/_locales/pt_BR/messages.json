@@ -16,7 +16,7 @@
     "description": "popup sub title"
   },
   "homeTab": {
-    "message": "Casa",
+    "message": "Home",
     "description": "home tab text"
   },
   "trackerTab": {
@@ -24,11 +24,11 @@
     "description": "tracker tab text"
   },
   "manageTab": {
-    "message": "Gerir",
+    "message": "Gerenciar",
     "description": "manage tab text"
   },
   "cookieSwitchText": {
-    "message": "Nunca armazene meu histórico de navegação em",
+    "message": "Não armazene meu histórico em",
     "description": "text above cookie switch"
   },
   "cookieSwitchHint": {
@@ -36,7 +36,7 @@
     "description": "hint above cookie switch"
   },
   "trackerSwitchText": {
-    "message": "Rastreador de bloqueio em todos os sites",
+    "message": "Bloquear rastreadores em todos os sites",
     "description": "text above tracker switch"
   },
   "trackerSwitchHint": {
@@ -44,11 +44,11 @@
     "description": "hint above tracker switch"
   },
   "noTracker": {
-    "message": "Não há rastreador neste site!",
+    "message": "Não há rastreadores nesse site!",
     "description": "empty message on tracker tab"
   },
   "trustSite": {
-    "message": "Trust Site",
+    "message": "Confiar",
     "description": "trust site button on tracker tab"
   },
   "distrustSite": {
@@ -72,7 +72,7 @@
     "description": "error message that domain already exists on manage tab"
   },
   "noSite": {
-    "message": "Sem Site",
+    "message": "Sem sites",
     "description": "empty message on manage tab"
   }
 }
