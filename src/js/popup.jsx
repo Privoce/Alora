@@ -45,9 +45,20 @@ class MenuBar extends React.Component {
         return (
             <Menu
                 mode='horizontal'
-                selectedKeys={[internalState.activeTabKey]}
+                selectedKeys={[appState.get().activeTabKey]}
                 onSelect={e => {
-                    internalState.activeTabKey = e.key.toString();
+                    const newActiveTabKey = e.key.toString();
+                    chrome.runtime.sendMessage({
+                        src: 'popup',
+                        action: 'set active tab key',
+                        data: {
+                            activeTabKey: newActiveTabKey
+                        }
+                    }, response => {
+                        if (response.result) {
+                            appState.get().activeTabKey = newActiveTabKey;
+                        }
+                    });
                 }}
             >
                 <Menu.Item key='home'>{chrome.i18n.getMessage('homeTab')}</Menu.Item>
@@ -151,7 +162,7 @@ class HomeTab extends React.Component {
     render() {
         return (
             <div className='home-tab' style={{
-                display: internalState.activeTabKey === 'home' ? 'block' : 'none'
+                display: appState.get().activeTabKey === 'home' ? 'block' : 'none'
             }}>
                 <div className='home-tab-box home-tab-box-cookie'>
                     <TagLine
@@ -296,7 +307,7 @@ class TrackerTab extends React.Component {
     render() {
         return (
             <div className='tracker-tab' style={{
-                display: internalState.activeTabKey === 'tracker' ? 'block' : 'none'
+                display: appState.get().activeTabKey === 'tracker' ? 'block' : 'none'
             }}>
                 <Empty
                     style={{display: this.isEmpty ? 'block' : 'none'}}
@@ -437,7 +448,7 @@ class ManageTab extends React.Component {
     render() {
         return (
             <div className='manage-tab' style={{
-                display: internalState.activeTabKey === 'manage' ? 'block' : 'none'
+                display: appState.get().activeTabKey === 'manage' ? 'block' : 'none'
             }}>
                 <InfoSitesList/>
                 <Empty
@@ -475,11 +486,11 @@ class App extends React.Component {
 }
 
 const internalState = observable({
-    activeTabKey: 'home',
     inputText: '',
     inputPlaceholder: ''
 });
 const appState = observable.box({
+    activeTabKey: '',   // initially show nothing, avoid flicker
     homeTabState: {
         url: '',
         // cookie switch state can be derived from home tab domain and manage tab list items
@@ -514,5 +525,3 @@ queryConfig().then();
 setInterval(queryConfig, 2000);
 
 ReactDOM.render(<App/>, document.getElementById('root'));
-// TODO: fix home tab favicon missing issue, pass url instead of domain
-// TODO: fix manage tab favicon missing issue, pass url instead of domain

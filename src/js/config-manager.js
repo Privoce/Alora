@@ -22,7 +22,7 @@ export class ConfigManager {
             );
         });
         this.cache.cookieBlacklist = storage.cookieBlacklist || [];
-        this.cache.trackerMasterSwitch = storage.trackerMasterSwitch || true;
+        this.cache.trackerMasterSwitch = storage.trackerMasterSwitch !== undefined ? storage.trackerMasterSwitch : true;
         this.cache.trackerWhitelist = storage.trackerWhitelist || [];
         this.cache.trackerAllowedList = storage.trackerAllowedList || {};
         autorun(() => {
@@ -35,6 +35,7 @@ export class ConfigManager {
             });
         }, {delay: 1000});
         autorun(() => {
+            console.log()
             chrome.storage.local.set({
                 trackerMasterSwitch: this.cache.trackerMasterSwitch
             }, () => {

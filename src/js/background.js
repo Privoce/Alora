@@ -15,39 +15,54 @@ ConfigManager.initiate().then();
 AbpRulesManager.initiate().then();
 TabProfileManager.initiate();
 
+// store active tab key for popup, no need to store permanently
+let activeTabKey = 'home';
+
 // block request
 chrome.webRequest.onBeforeRequest.addListener(
-    details => {
-        if (details.tabId === chrome.tabs.TAB_ID_NONE) {
+    requestDetails => {
+        if (requestDetails.tabId === chrome.tabs.TAB_ID_NONE) {
             // allow all requests that are not coming from a tab
             return {};
         }
         // do not use current tab id from tab profile manager,
+        // always use tab id from request details,
         // because a web request may come from an inactive tab
-        const domain = getDomain(TabProfileManager.getUrl(details.tabId));
         const trackerMasterEnabled = ConfigManager.getTrackerMasterSwitch();
+        if (!trackerMasterEnabled) {
+            return {};
+        }
+        const domain = getDomain(TabProfileManager.getUrl(requestDetails.tabId));
+        const isPageSelf = requestDetails.type === 'main_frame' || requestDetails.type === 'sub_frame';
         const domainWhitelisted = ConfigManager.checkTrackerWhitelist(domain);
-        const userAllowed = ConfigManager.checkTrackerAllowedList(domain, details.url);
-        const {result: blockedByRules, matchedRuleName} = AbpRulesManager.checkShouldBlock(domain, details.url);
+        const userAllowed = ConfigManager.checkTrackerAllowedList(domain, requestDetails.url);
+        const {result: blockedByRules, matchedRuleName} = AbpRulesManager.checkShouldBlock(domain, requestDetails.url);
 
         // even if user allows whole site or single tracker,
         // tracker info should still be added to tab profile
         // to be displayed on popup
-        const shouldAddToTabProfile = trackerMasterEnabled && blockedByRules;
+        const shouldAddToTabProfile = trackerMasterEnabled && !isPageSelf && blockedByRules;
         // now take all conditions into consideration
-        const shouldBlock = trackerMasterEnabled && !domainWhitelisted && !userAllowed && blockedByRules;
+        const shouldBlock = trackerMasterEnabled && !isPageSelf && !domainWhitelisted && !userAllowed && blockedByRules;
 
         if (shouldAddToTabProfile) {
             // tracker whitelist is another logic,
             // internally, it is separate from user allowed logic,
             // one controls by site and one controls by tracker,
             // externally, site has higher priority than tracker and can short the latter
-            TabProfileManager.addAbpBlockedRequest(details.tabId, matchedRuleName, details.url, userAllowed);
-            // only log requests that are matched by ABP rules
-            prettyPrint(shouldBlock ? 2 : 0, moduleName, 'Handled web request', {
-                details, domain, domainWhitelisted, userAllowed, matchedRuleName, shouldBlock
-            });
+            TabProfileManager.addAbpBlockedRequest(requestDetails.tabId, matchedRuleName, requestDetails.url, userAllowed);
         }
+        prettyPrint(shouldBlock ? 2 : 0, moduleName, 'Handled web request', {
+            requestDetails,
+            domain,
+            isPageSelf,
+            domainWhitelisted,
+            userAllowed,
+            blockedByRules,
+            matchedRuleName,
+            shouldAddToTabProfile,
+            shouldBlock
+        });
         return {cancel: shouldBlock};
     },
     {urls: ['*://*/*']},
@@ -119,6 +134,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         } else if (message.src === 'popup' && message.action === 'query config') {
             const url = TabProfileManager.getUrl(TabProfileManager.currentTabId);
             const appState = {
+                activeTabKey,
                 homeTabState: {
                     url,
                     trackerSwitchState: ConfigManager.getTrackerMasterSwitch()
@@ -176,7 +192,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         } else if (message.src === 'popup' && message.action === 'del tracker allowed') {
             response = {
                 result: ConfigManager.removeTrackerAllowedList(message.data.domain, message.data.url)
-            }
+            };
+        } else if (message.src === 'popup' && message.action === 'set active tab key') {
+            activeTabKey = message.data.activeTabKey;
+            response = {
+                result: true
+            };
         }
         if (message.src === 'popup' && message.action.includes('tracker')) {
             // tracker related features, need to refresh page automatically

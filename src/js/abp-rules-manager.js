@@ -7,8 +7,7 @@ const moduleName = '🔰 ABP Rules';
 
 const abpRulesUpdateUrls = {
     'EasyPrivacy': 'https://easylist.to/easylist/easyprivacy.txt',
-    'Fanboy-Social': 'https://easylist.to/easylist/fanboy-social.txt',
-    'EasyList': 'https://easylist.to/easylist/easylist.txt'
+    'Fanboy-Social': 'https://easylist.to/easylist/fanboy-social.txt'
 };
 
 export class AbpRulesManager {
