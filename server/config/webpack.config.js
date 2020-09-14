@@ -25,7 +25,28 @@ module.exports = {
         rules: [
             {
                 test: /\.jsx?$/,
-                use: ['babel-loader'],
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: [
+                            [
+                                '@babel/preset-env',
+                                {
+                                    targets: {
+                                        chrome: MINIMUM_CHROME_VERSION
+                                    }
+                                }
+                            ],
+                            '@babel/preset-react'
+                        ],
+                        plugins: [
+                            ['@babel/plugin-proposal-decorators', {legacy: true}],
+                            ['@babel/plugin-proposal-class-properties', {loose: true}],
+                            'babel-plugin-lodash',
+                            'react-hot-loader/babel'
+                        ]
+                    }
+                },
                 exclude: /node_modules/
             },
             {
