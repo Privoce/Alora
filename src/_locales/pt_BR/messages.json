@@ -48,11 +48,11 @@
     "description": "empty message on tracker tab"
   },
   "trustSite": {
-    "message": "Confiar",
+    "message": "Tornar site confiável",
     "description": "trust site button on tracker tab"
   },
   "distrustSite": {
-    "message": "Local de Desconfiança",
+    "message": "Tornar site não confiável",
     "description": "distrust site button on tracker tab"
   },
   "siteListHint": {
