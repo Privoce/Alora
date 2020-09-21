@@ -37,6 +37,8 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-hot-loader": "^4.12.21",
+    "react-infinite-scroller": "^1.2.4",
+    "react-scrollbars-custom": "^4.0.25",
     "sass": "^1.26.10",
     "sass-loader": "^9.0.3",
     "ssestream": "^1.1.0",
@@ -50,9 +52,5 @@
     "webpack-merge": "^5.1.1",
     "webpackbar": "^4.0.0",
     "yargs": "^15.4.1"
-  },
-  "dependencies": {
-    "react-infinite-scroller": "^1.2.4",
-    "react-scrollbars-custom": "^4.0.25"
   }
 }
