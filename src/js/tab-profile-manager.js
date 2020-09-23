@@ -116,7 +116,7 @@ export class TabProfileManager {
             let result = 0;
             for (let ruleName in this.cache[tabId].abpBlockedRequests) {
                 result += this.cache[tabId].abpBlockedRequests[ruleName]
-                    .filter(request => request.userAllowed || forceAllowedAll)
+                    .filter(request => !forceAllowedAll && !request.userAllowed)
                     .length;
             }
             return result;

@@ -44,7 +44,7 @@ function getFriendlyUrl(url) {
         .filter(i => i) // ignore empty items
         .slice(-1)[0]  // use the last item
         .replace(/[?#](.*)$/, '');   // remove parameters that starts with ? or #
-    return `/${filename || ''} @ ${domain}`;
+    return [`/${filename || ''}`, domain];
 }
 
 // user allow rule, no protocol prefix, no parameters

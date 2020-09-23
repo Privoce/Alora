@@ -37,8 +37,11 @@ class Header extends React.Component {
 @observer
 class MenuBar extends React.Component {
     get badgeNumber() {
-        return appState.get().trackerTabState.listItems.filter(item =>
-            !item.isHeader && (item.userAllowed || appState.get().trackerTabState.siteTrusted)).length;
+        return appState.get().trackerTabState.listItems
+            .filter(item =>
+                !item.isHeader && !item.userAllowed && !appState.get().trackerTabState.siteTrusted
+            )
+            .length;
     }
 
     render() {
@@ -216,6 +219,7 @@ class SingleTracker extends React.Component {
     }
 
     render() {
+        const friendlyUrl = getFriendlyUrl(this.props.item.content);
         return (
             <>
                 <Popover
@@ -227,7 +231,7 @@ class SingleTracker extends React.Component {
                     )}
                     getPopupContainer={() => document.getElementById('popover-group-2')}
                 >
-                    <span className='single-tracker-content'>{getFriendlyUrl(this.props.item.content)}</span>
+                    <span className='single-tracker-content'><strong>{friendlyUrl[0]}</strong> {friendlyUrl[1]}</span>
                 </Popover>
                 <div className='single-tracker-action'>
                     <img
@@ -522,6 +526,6 @@ const queryConfig = async () => {
 // immediately call to query initial config
 queryConfig().then();
 // update based on a fixed interval
-setInterval(queryConfig, 2000);
+setInterval(queryConfig, 5000);
 
 ReactDOM.render(<App/>, document.getElementById('root'));

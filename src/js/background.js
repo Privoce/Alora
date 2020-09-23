@@ -199,6 +199,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 result: true
             };
         }
+        // check if needed to reload page
         if (message.src === 'popup' && message.action.includes('tracker')) {
             // tracker related features, need to refresh page automatically
             refreshPage();
