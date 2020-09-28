@@ -40,10 +40,11 @@ module.exports = {
                             '@babel/preset-react'
                         ],
                         plugins: [
+                            'babel-plugin-lodash',
+                            'react-hot-loader/babel',
                             ['@babel/plugin-proposal-decorators', {legacy: true}],
                             ['@babel/plugin-proposal-class-properties', {loose: true}],
-                            'babel-plugin-lodash',
-                            'react-hot-loader/babel'
+                            ['babel-plugin-import', {libraryName: 'antd'}]
                         ]
                     }
                 },

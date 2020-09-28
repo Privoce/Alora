@@ -150,11 +150,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             // fill trackerTabState.listItems
             const abpBlockedRequests = TabProfileManager.getAbpBlockedRequests(TabProfileManager.currentTabId);
             for (let ruleName in abpBlockedRequests) {
-                appState.trackerTabState.listItems.push({
-                    isHeader: true,
-                    content: ruleName,
-                    userAllowed: false
-                });
+                // do not display categories
+                // appState.trackerTabState.listItems.push({
+                //     isHeader: true,
+                //     content: ruleName,
+                //     userAllowed: false
+                // });
                 abpBlockedRequests[ruleName].forEach(request => {
                     appState.trackerTabState.listItems.push({
                         isHeader: false,
