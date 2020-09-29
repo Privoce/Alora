@@ -36,11 +36,11 @@
     "description": "hint above cookie switch"
   },
   "trackerSwitchText": {
-    "message": "Bloquear rastreadores em todos os sites",
+    "message": "Bloquear anúncios e rastreadores em todos os sites",
     "description": "text above tracker switch"
   },
   "trackerSwitchHint": {
-    "message": "Alora bloqueia rastreadores e outros scripts maliciosos de seguir você online para coletar informações sobre seus hábitos de navegação e interesses.",
+    "message": "Alora bloqueia anúncios e rastreadores e outros scripts maliciosos de seguir você online para coletar informações sobre seus hábitos de navegação e interesses.",
     "description": "hint above tracker switch"
   },
   "noTracker": {
