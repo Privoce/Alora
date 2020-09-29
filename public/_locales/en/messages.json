@@ -36,7 +36,7 @@
     "description": "hint above cookie switch"
   },
   "trackerSwitchText": {
-    "message": "Blocking tracker on all sites",
+    "message": "Blocking trackers and ADs on all sites",
     "description": "text above tracker switch"
   },
   "trackerSwitchHint": {

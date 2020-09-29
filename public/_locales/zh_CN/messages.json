@@ -36,7 +36,7 @@
     "description": "hint above cookie switch"
   },
   "trackerSwitchText": {
-    "message": "在所有网站上阻止跟踪行为",
+    "message": "在所有网站上阻止跟踪行为和广告",
     "description": "text above tracker switch"
   },
   "trackerSwitchHint": {
