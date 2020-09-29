@@ -114,6 +114,7 @@ module.exports = {
             cleanStaleWebpackAssets: false
         }),
         new WebpackBar({
+            name: isDev ? 'Dev. Build' : 'Prod. Build',
             color: isDev ? '#fff300' : '#00fff7'
         }),
         new FriendlyErrorsPlugin(),
@@ -147,16 +148,6 @@ module.exports = {
                 {
                     from: resolve(PROJECT_ROOT, 'public'),
                     to: resolve(PROJECT_ROOT, 'build'),
-                    flatten: true,
-                    force: true
-                }
-            ]
-        }),
-        new CopyWebpackPlugin({
-            patterns: [
-                {
-                    from: resolve(PROJECT_ROOT, 'src/_locales'),
-                    to: resolve(PROJECT_ROOT, 'build/_locales'),
                     force: true
                 }
             ]
@@ -169,10 +160,5 @@ module.exports = {
                 collapseWhitespace: true
             }
         })
-    ],
-    resolve: {
-        alias: {
-            'react-dom': '@hot-loader/react-dom'
-        }
-    }
+    ]
 };

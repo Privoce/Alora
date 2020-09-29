@@ -27,5 +27,10 @@ module.exports = merge(baseConfig, {
     devtool: 'cheap-module-source-map',
     plugins: [
         new HotModuleReplacementPlugin()
-    ]
+    ],
+    resolve: {
+        alias: {
+            'react-dom': '@hot-loader/react-dom'
+        }
+    }
 });

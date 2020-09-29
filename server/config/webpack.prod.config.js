@@ -5,6 +5,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const {HashedModuleIdsPlugin} = require('webpack');
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const AntdDayjsWebpackPlugin = require('antd-dayjs-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const baseConfig = require('./webpack.config');
 const {PROJECT_ROOT} = require('./env');
 
@@ -18,7 +19,8 @@ module.exports = merge(baseConfig, {
             hashDigestLength: 20
         }),
         new LodashModuleReplacementPlugin,
-        new AntdDayjsWebpackPlugin()
+        new AntdDayjsWebpackPlugin(),
+        new BundleAnalyzerPlugin()
     ],
     optimization: {
         minimize: true,
@@ -33,8 +35,6 @@ module.exports = merge(baseConfig, {
         }
     },
     performance: {
-        hints: false,
-        maxAssetSize: 1024000,
-        maxEntrypointSize: 4096000
+        hints: false
     }
 });
