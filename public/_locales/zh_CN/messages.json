@@ -74,5 +74,13 @@
   "noSite": {
     "message": "没有网站",
     "description": "empty message on manage tab"
+  },
+  "trackerCategory_tracker": {
+    "message": "跟踪器",
+    "description": "name of tracker category in tracker tab"
+  },
+  "trackerCategory_ad": {
+    "message": "广告",
+    "description": "name of ad category in tracker tab"
   }
 }

@@ -114,7 +114,7 @@ module.exports = {
             cleanStaleWebpackAssets: false
         }),
         new WebpackBar({
-            name: isDev ? 'Dev. Build' : 'Prod. Build',
+            name: isDev ? 'Debug' : 'Release',
             color: isDev ? '#fff300' : '#00fff7'
         }),
         new FriendlyErrorsPlugin(),

@@ -84,6 +84,10 @@ body {
     }
   }
 
+  .ant-badge {
+    width: 62px;
+  }
+
   .ant-badge-count {
     background-color: @primaryColor;
     font-size: 10px;
@@ -91,7 +95,7 @@ body {
     min-width: 15px;
     line-height: 15px;
     border-radius: 7.5px;
-    padding: 0;
+    padding: 0 2px;
     text-align: center;
     top: -6px;
     right: -8px;
@@ -160,30 +164,8 @@ body {
     font-size: 10px;
     font-weight: normal;
     line-height: 12px;
-  }
-}
-
-#popover-group-1 .ant-popover-inner-content {
-  padding: 15px 10px;
-  max-width: 200px;
-}
-
-#popover-group-2 {
-  .ant-popover {
-    left: 30px !important;
-  }
-
-  .ant-popover-inner-content {
-    padding: 10px;
-    width: 320px;
-    word-break: break-all;
-    height: 80px;
-  }
-
-  .ScrollbarsCustom-TrackY {
-    top: 0 !important;
-    height: 100% !important;
-    width: 5px !important;
+    padding: 15px 10px;
+    max-width: 200px;
   }
 }
 
@@ -279,6 +261,32 @@ body {
   }
 }
 
+.tracker-list-header {
+  display: inline-flex;
+  margin-top: 13px;
+  margin-bottom: 13px;
+
+  &-text {
+    font-size: 14px;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 16px;
+  }
+
+  &-badge {
+    color: #ffffff;
+    background-color: @primaryColor;
+    font-size: 10px;
+    height: 16px;
+    line-height: 16px;
+    border-radius: 5px;
+    padding: 0 6px;
+    margin-left: 8px;
+  }
+}
+
 .tracker-list {
   height: 226px;
 
@@ -288,14 +296,6 @@ body {
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 260px;
-  }
-
-  .tracker-list-header {
-    font-size: 14px;
-    font-weight: bold;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .single-tracker-action {
@@ -315,11 +315,25 @@ body {
     padding: 0 10px;
     border-radius: 5px;
     border: #53da81 1px solid;
+    color: #ffffff;
+    background-color: #53da81;
+
+    &:focus, &:hover, &:active {
+      color: #ffffff;
+      background-color: #53da81;
+    }
   }
 
   .trust-site-btn-trusted {
-    background-color: #53da81;
-    color: #ffffff;
+    color: #000000;
+    background: none;
+    border: #ff5656 1px solid;
+
+    &:focus, &:hover, &:active {
+      color: #000000;
+      background: none;
+    }
+
   }
 }
 

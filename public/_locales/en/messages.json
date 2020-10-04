@@ -74,5 +74,17 @@
   "noSite": {
     "message": "No Site",
     "description": "empty message on manage tab"
+  },
+  "trackerCategory_tracker": {
+    "message": "Tracker",
+    "description": "name of tracker category in tracker tab"
+  },
+  "trackerCategory_ad": {
+    "message": "Ads",
+    "description": "name of ad category in tracker tab"
+  },
+  "trackerCategoryBlocked": {
+    "message": "Blocked",
+    "description": "text after category-wise blocked number"
   }
 }

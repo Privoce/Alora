@@ -6,11 +6,25 @@ import {prettyPrint} from './utils';
 const moduleName = '🔰 ABP Rules';
 
 const abpRulesUpdateUrls = {
-    'EasyPrivacy': 'https://easylist.to/easylist/easyprivacy.txt',
-    'Fanboy-Social': 'https://easylist.to/easylist/fanboy-social.txt'
+    'EasyPrivacy': {
+        url: 'https://easylist.to/easylist/easyprivacy.txt',
+        category: 'tracker'
+    },
+    'Fanboy-Social': {
+        url: 'https://easylist.to/easylist/fanboy-social.txt',
+        category: 'tracker'
+    },
+    'EasyList': {
+        url: 'https://easylist.to/easylist/easylist.txt',
+        category: 'ad'
+    },
+    'EasyList China': {
+        url: 'https://easylist-downloads.adblockplus.org/easylistchina.txt',
+        category: 'ad'
+    }
 };
 
-export class AbpRulesManager {
+class AbpRulesManager {
     static cache = observable({});
     static parsedFilterData = {};
 
@@ -64,7 +78,7 @@ export class AbpRulesManager {
         for (let ruleName in abpRulesUpdateUrls) {
             const localVersion = getVersion(this.cache[ruleName]);
             const xhr = new XMLHttpRequest();
-            xhr.open('get', abpRulesUpdateUrls[ruleName], true);
+            xhr.open('get', abpRulesUpdateUrls[ruleName].url, true);
             xhr.onreadystatechange = () => {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
@@ -96,7 +110,7 @@ export class AbpRulesManager {
 
     static checkShouldBlock(currentPageDomain, urlToCheck) {
         let result = false;
-        let matchedRuleName = '';
+        let category = '';
         try {
             for (let ruleName in this.parsedFilterData) {
                 result = ABPFilterParser.matches(this.parsedFilterData[ruleName], urlToCheck, {
@@ -105,7 +119,7 @@ export class AbpRulesManager {
                 });
                 // break on first match
                 if (result) {
-                    matchedRuleName = ruleName;
+                    category = abpRulesUpdateUrls[ruleName].category;
                     break;
                 }
             }
@@ -114,7 +128,11 @@ export class AbpRulesManager {
         }
         return {
             result,
-            matchedRuleName
+            category
         };
     }
+}
+
+export {
+    abpRulesUpdateUrls, AbpRulesManager
 }

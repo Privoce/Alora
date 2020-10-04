@@ -1,6 +1,6 @@
 import {autorun, observable, toJS} from 'mobx';
 
-import {prettyPrint, getCustomRule} from "./utils";
+import {prettyPrint, getRuleFromUrl} from "./utils";
 
 const moduleName = '🔧 Config';
 
@@ -126,7 +126,7 @@ export class ConfigManager {
     }
 
     static checkTrackerAllowedList(currentPageDomain, urlToCheck) {
-        urlToCheck = getCustomRule(urlToCheck);
+        urlToCheck = getRuleFromUrl(urlToCheck);
         let result = false;
         if (this.cache.trackerAllowedList[currentPageDomain]) {
             result = this.cache.trackerAllowedList[currentPageDomain].includes(urlToCheck);
@@ -135,7 +135,7 @@ export class ConfigManager {
     }
 
     static addTrackerAllowedList(currentPageDomain, urlToAdd) {
-        urlToAdd = getCustomRule(urlToAdd);
+        urlToAdd = getRuleFromUrl(urlToAdd);
         if (!this.cache.trackerAllowedList[currentPageDomain]) {
             this.cache.trackerAllowedList[currentPageDomain] = [urlToAdd];
             return true;
@@ -148,7 +148,7 @@ export class ConfigManager {
     }
 
     static removeTrackerAllowedList(currentPageDomain, urlToRemove) {
-        urlToRemove = getCustomRule(urlToRemove);
+        urlToRemove = getRuleFromUrl(urlToRemove);
         if (this.cache.trackerAllowedList[currentPageDomain] &&
             this.cache.trackerAllowedList[currentPageDomain].includes(urlToRemove)) {
             if (this.cache.trackerAllowedList[currentPageDomain].length <= 1) {

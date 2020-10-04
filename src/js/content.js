@@ -11,7 +11,7 @@ function sendData() {
     const data = performance.getEntriesByType('resource').map(e => e.name);
     chrome.runtime.sendMessage({
         src: 'content script',
-        action: 'clear cookie and history',
+        action: 'page unloading',
         domain: location.hostname,
         data
     });
