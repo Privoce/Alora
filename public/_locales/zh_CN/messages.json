@@ -45,7 +45,7 @@
   },
   "noTracker": {
     "message": "该网站上没有追踪行为！",
-    "description": "empty message on tracker tab"
+    "description": "empttrackerCategory_ady message on tracker tab"
   },
   "trustSite": {
     "message": "信任本网站",

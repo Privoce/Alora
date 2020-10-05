@@ -74,5 +74,9 @@
   "noSite": {
     "message": "Sem sites",
     "description": "empty message on manage tab"
+  },
+  "trackerCategory_ad": {
+    "message": "Anúncios",
+    "description": "name of ad category in tracker tab"
   }
 }
