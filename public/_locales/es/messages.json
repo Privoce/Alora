@@ -78,5 +78,9 @@
   "trackerCategory_ad": {
     "message": "Anuncios",
     "description": "name of ad category in tracker tab"
+  },
+  "trackerCategory_tracker": {
+    "message": "Rastreadores",
+    "description": "name of tracker category in tracker tab"
   }
 }
