@@ -1,6 +1,6 @@
 {
   "name": "alora",
-  "version": "3.0.5",
+  "version": "1.0.0",
   "description": "All-in-one privacy manager.",
   "scripts": {
     "start": "node server/util/start.js --mode development",

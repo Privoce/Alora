@@ -126,17 +126,12 @@ module.exports = {
                     to: resolve(PROJECT_ROOT, 'build'),
                     transform(data) {
                         let content = JSON.parse(data);
-                        // some content security policy for development purpose
-                        if (isDev) {
-                            // remove existed fields
-                            content['content_security_policy'] = content['content_security_policy']
-                                .replace(/script-src(.*?);/, '').replace(/object-src(.*?);/, '');
-                            content['content_security_policy'] =
-                                (content['content_security_policy'] || '') +
-                                'script-src \'self\' \'unsafe-eval\';object-src \'self\';';
-                        }
-                        content.version = process.env.npm_package_version;
                         content.minimum_chrome_version = MINIMUM_CHROME_VERSION;
+                        if (isDev) {
+                            content.content_security_policy = "script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com; object-src 'self';";
+                        } else {
+                            content.content_security_policy = "script-src 'self' https://ssl.google-analytics.com; object-src 'self';";
+                        }
                         return Buffer.from(JSON.stringify(content));
                     },
                     force: true

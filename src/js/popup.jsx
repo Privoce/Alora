@@ -7,6 +7,7 @@ import {observer} from 'mobx-react';
 import { v4 as uuidv4 } from 'uuid';
 
 import {getFaviconUrlFromDomain, getFriendlyRuleFromRule, preventDrag, prettyPrint, getDomainFromUrl, getFaviconUrlFromUrl} from "./utils";
+import {AnalyticsProvider} from "./analytics-provider.jsx";
 
 import '../css/popup.less';
 
@@ -489,6 +490,7 @@ class App extends React.Component {
                 <HomeTab/>
                 <TrackerTab/>
                 <ManageTab/>
+                <AnalyticsProvider/>
             </>
         );
     }
